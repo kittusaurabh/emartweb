@@ -17,7 +17,7 @@ const Variant = require("../../model/variantProduct")
 exports.login = async function (req, res, next) {
   let {
       email,
-      password,
+      password ,
   } = req.body;
 
   const schema = Joi.object({
