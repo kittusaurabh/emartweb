@@ -10,7 +10,7 @@ const childCategory = require("../../model/childCategory");
 const Brands = require("../../model/brandModel");
 const Store = require("../../model/store");
 const Variant = require("../../model/variantProduct");
-const Simple = require("../../model/simpleProduct")
+const Product = require("../../model/Product");
 
 
 
@@ -657,9 +657,9 @@ exports.deleteVariantProduct = async (req, res) => {
 
 
 
-exports.addSimpleProduct = async (req, res) => {
+exports.addProduct = async (req, res) => {
   try {
-   let user = await Simple.create(req.body)
+   let user = await Product.create(req.body)
     
     return res.status(200).json({
       data: user,
@@ -672,9 +672,9 @@ exports.addSimpleProduct = async (req, res) => {
     });
   }
 };
-exports.getSimpleProduct = async (req, res) => {
+exports.getProduct = async (req, res) => {
   try {
-   let user = await Simple.find(req.body)
+   let user = await Product.find(req.body)
     
     return res.status(200).json({
       data: user,
@@ -687,9 +687,9 @@ exports.getSimpleProduct = async (req, res) => {
     });
   }
 };
-exports.updateSimpleProduct = async (req, res) => {
+exports.updateProduct = async (req, res) => {
   try {
-   let user = await Simple.findByIdAndUpdate(req.body._id,req.body,{
+   let user = await Product.findByIdAndUpdate(req.body._id,req.body,{
     new:true
    })
     
@@ -704,9 +704,9 @@ exports.updateSimpleProduct = async (req, res) => {
     });
   }
 };
-exports.deleteSimpleProduct = async (req, res) => {
+exports.deleteProduct = async (req, res) => {
   try {
-   let user = await Simple.findByIdAndDelete(req.body._id)
+   let user = await Product.findByIdAndDelete(req.body._id)
     
     return res.status(200).json({
       data: user,

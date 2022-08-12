@@ -56,10 +56,10 @@ router.post('/deleteVariantProduct',adminController.deleteVariantProduct)
 
 
 
-router.post('/addSimpleProduct',adminController.addSimpleProduct)
-router.get('/getSimpleProduct',adminController.getSimpleProduct)
-router.post('/updateSimpleProduct',adminController.updateSimpleProduct)
-router.post('/deleteSimpleProduct',adminController.deleteSimpleProduct)
+router.post('/addProduct',adminController.addProduct)
+router.get('/getProduct',adminController.getProduct)
+router.post('/updateProduct',adminController.updateProduct)
+router.post('/deleteProduct',adminController.deleteProduct)
 
 
 exports.Router = router;

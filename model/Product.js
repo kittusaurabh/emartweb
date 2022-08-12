@@ -1,9 +1,9 @@
 let mongoose = require('mongoose')
-let simpleProductSchema = mongoose.Schema({
+let productSchema = mongoose.Schema({
 
-    productId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:"variantProduct"
+    productType: {
+        type: String,
+        enum:['0','1','2']
     },
     productName: {
         type: String,
@@ -126,5 +126,5 @@ let simpleProductSchema = mongoose.Schema({
     timestamps: true
 })
 
-let simpleProduct = new mongoose.model('simpleProduct', simpleProductSchema)
-module.exports = simpleProduct;
+let Product = new mongoose.model('Product', productSchema)
+module.exports = Product;
