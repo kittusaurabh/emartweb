@@ -55,4 +55,11 @@ router.post('/updateVariantProduct',adminController.updateVariantProduct)
 router.post('/deleteVariantProduct',adminController.deleteVariantProduct)
 
 
+
+router.post('/addSimpleProduct',adminController.addSimpleProduct)
+router.get('/getSimpleProduct',adminController.getSimpleProduct)
+router.post('/updateSimpleProduct',adminController.updateSimpleProduct)
+router.post('/deleteSimpleProduct',adminController.deleteSimpleProduct)
+
+
 exports.Router = router;

@@ -5,11 +5,12 @@ const adminModel = require("../../model/adminModel");
 const User = require("../../model/customerModel");
 const Seller = require("../../model/sellerModel");
 const Category = require("../../model/category");
-const subCategory = require("../../model/subCategory")
-const childCategory = require("../../model/childCategory")
-const Brands = require("../../model/brandModel")
-const Store = require("../../model/store")
-const Variant = require("../../model/variantProduct")
+const subCategory = require("../../model/subCategory");
+const childCategory = require("../../model/childCategory");
+const Brands = require("../../model/brandModel");
+const Store = require("../../model/store");
+const Variant = require("../../model/variantProduct");
+const Simple = require("../../model/simpleProduct")
 
 
 
@@ -641,6 +642,71 @@ exports.updateVariantProduct = async (req, res) => {
 exports.deleteVariantProduct = async (req, res) => {
   try {
    let user = await Variant.findByIdAndDelete(req.body._id)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+
+
+exports.addSimpleProduct = async (req, res) => {
+  try {
+   let user = await Simple.create(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getSimpleProduct = async (req, res) => {
+  try {
+   let user = await Simple.find(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateSimpleProduct = async (req, res) => {
+  try {
+   let user = await Simple.findByIdAndUpdate(req.body._id,req.body,{
+    new:true
+   })
+    
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteSimpleProduct = async (req, res) => {
+  try {
+   let user = await Simple.findByIdAndDelete(req.body._id)
     
     return res.status(200).json({
       data: user,
