@@ -5,11 +5,17 @@ const adminModel = require("../../model/adminModel");
 const User = require("../../model/customerModel");
 const Seller = require("../../model/sellerModel");
 const Category = require("../../model/category");
-const subCategory = require("../../model/subCategory")
-const childCategory = require("../../model/childCategory")
-const Brands = require("../../model/brandModel")
-const Store = require("../../model/store")
-const Variant = require("../../model/variantProduct")
+const subCategory = require("../../model/subCategory");
+const childCategory = require("../../model/childCategory");
+const Brands = require("../../model/brandModel");
+const Store = require("../../model/store");
+const Variant = require("../../model/variantProduct");
+const Product = require("../../model/Product");
+const Return = require("../../model/returnPolicy");
+const Coupon = require("../../model/coupon")
+const specialOffer = require("../../model/specialOffer")
+const Unit = require("../../model/Unit")
+const sizeChart = require("../../model/sizeChart")
 
 
 
@@ -17,7 +23,7 @@ const Variant = require("../../model/variantProduct")
 exports.login = async function (req, res, next) {
   let {
       email,
-      password ,
+      password,
   } = req.body;
 
   const schema = Joi.object({
@@ -641,6 +647,392 @@ exports.updateVariantProduct = async (req, res) => {
 exports.deleteVariantProduct = async (req, res) => {
   try {
    let user = await Variant.findByIdAndDelete(req.body._id)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+
+
+exports.addProduct = async (req, res) => {
+  try {
+   let user = await Product.create(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getProduct = async (req, res) => {
+  try {
+   let user = await Product.find(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateProduct = async (req, res) => {
+  try {
+   let user = await Product.findByIdAndUpdate(req.body._id,req.body,{
+    new:true
+   })
+    
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteProduct = async (req, res) => {
+  try {
+   let user = await Product.findByIdAndDelete(req.body._id)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+
+exports.addReturnPolicy = async (req, res) => {
+  try {
+   let user = await Return.create(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getReturnPolicy = async (req, res) => {
+  try {
+   let user = await Return.find(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateReturnPolicy = async (req, res) => {
+  try {
+   let user = await Return.findByIdAndUpdate(req.body._id,req.body,{
+    new:true
+   })
+    
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteReturnPolicy = async (req, res) => {
+  try {
+   let user = await Return.findByIdAndDelete(req.body._id)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+
+exports.addCoupon = async (req, res) => {
+  try {
+   let user = await Coupon.create(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getCoupon = async (req, res) => {
+  try {
+   let user = await Coupon.find(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateCoupon = async (req, res) => {
+  try {
+   let user = await Coupon.findByIdAndUpdate(req.body._id,req.body,{
+    new:true
+   })
+    
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteCoupon = async (req, res) => {
+  try {
+   let user = await Coupon.findByIdAndDelete(req.body._id)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+
+
+exports.addSpecialOffer = async (req, res) => {
+  try {
+   let user = await specialOffer.create(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getSpecialOffer = async (req, res) => {
+  try {
+   let user = await specialOffer.find(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateSpecialOffer = async (req, res) => {
+  try {
+   let user = await specialOffer.findByIdAndUpdate(req.body._id,req.body,{
+    new:true
+   })
+    
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteSpecialOffer = async (req, res) => {
+  try {
+   let user = await specialOffer.findByIdAndDelete(req.body._id)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+
+exports.addUnit = async (req, res) => {
+  try {
+   let user = await Unit.create(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getUnit = async (req, res) => {
+  try {
+   let user = await Unit.find(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateUnit = async (req, res) => {
+  try {
+   let user = await Unit.findByIdAndUpdate(req.body._id,req.body,{
+    new:true
+   })
+    
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteUnit = async (req, res) => {
+  try {
+   let user = await Unit.findByIdAndDelete(req.body._id)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+
+exports.addSizeChart = async (req, res) => {
+  try {
+   let user = await sizeChart.create(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getSizeChart = async (req, res) => {
+  try {
+   let user = await sizeChart.find(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateSizeChart = async (req, res) => {
+  try {
+   let user = await sizeChart.findByIdAndUpdate(req.body._id,req.body,{
+    new:true
+   })
+    
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteSizeChart = async (req, res) => {
+  try {
+   let user = await sizeChart.findByIdAndDelete(req.body._id)
     
     return res.status(200).json({
       data: user,

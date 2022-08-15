@@ -55,4 +55,42 @@ router.post('/updateVariantProduct',adminController.updateVariantProduct)
 router.post('/deleteVariantProduct',adminController.deleteVariantProduct)
 
 
+
+router.post('/addProduct',adminController.addProduct)
+router.get('/getProduct',adminController.getProduct)
+router.post('/updateProduct',adminController.updateProduct)
+router.post('/deleteProduct',adminController.deleteProduct)
+
+
+
+router.post('/addReturnPolicy',adminController.addReturnPolicy)
+router.get('/getReturnPolicy',adminController.getReturnPolicy)
+router.post('/updateReturnPolicy',adminController.updateReturnPolicy)
+router.post('/deleteReturnPolicy',adminController.deleteReturnPolicy)
+
+
+router.post('/addCoupon',adminController.addCoupon)
+router.get('/getCoupon',adminController.getCoupon)
+router.post('/updateCoupon',adminController.updateCoupon)
+router.post('/deleteCoupon',adminController.deleteCoupon)
+
+
+router.post('/addSpecialOffer',adminController.addSpecialOffer)
+router.get('/getSpecialOffer',adminController.getSpecialOffer)
+router.post('/updateSpecialOffer',adminController.updateSpecialOffer)
+router.post('/deleteSpecialOffer',adminController.deleteSpecialOffer)
+
+
+router.post('/addUnit',adminController.addUnit)
+router.get('/getUnit',adminController.getUnit)
+router.post('/updateUnit',adminController.updateUnit)
+router.post('/deleteUnit',adminController.deleteUnit)
+
+
+router.post('/addSizeChart',adminController.addSizeChart)
+router.get('/getSizeChart',adminController.getSizeChart)
+router.post('/updateSizeChart',adminController.updateSizeChart)
+router.post('/deleteSizeChart',adminController.deleteSizeChart)
+
+
 exports.Router = router;

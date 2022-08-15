@@ -38,8 +38,7 @@ let userSchema = mongoose.Schema({
     type:String
   },
   user_image : {
-    url:String,
-    url_type:String
+    type:String,
   },
   is_blocked : {
     type:Boolean,
