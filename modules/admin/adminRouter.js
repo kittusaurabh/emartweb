@@ -87,4 +87,10 @@ router.post('/updateUnit',adminController.updateUnit)
 router.post('/deleteUnit',adminController.deleteUnit)
 
 
+router.post('/addSizeChart',adminController.addSizeChart)
+router.get('/getSizeChart',adminController.getSizeChart)
+router.post('/updateSizeChart',adminController.updateSizeChart)
+router.post('/deleteSizeChart',adminController.deleteSizeChart)
+
+
 exports.Router = router;

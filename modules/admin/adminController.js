@@ -15,6 +15,7 @@ const Return = require("../../model/returnPolicy");
 const Coupon = require("../../model/coupon")
 const specialOffer = require("../../model/specialOffer")
 const Unit = require("../../model/Unit")
+const sizeChart = require("../../model/sizeChart")
 
 
 
@@ -968,6 +969,70 @@ exports.updateUnit = async (req, res) => {
 exports.deleteUnit = async (req, res) => {
   try {
    let user = await Unit.findByIdAndDelete(req.body._id)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+
+exports.addSizeChart = async (req, res) => {
+  try {
+   let user = await sizeChart.create(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getSizeChart = async (req, res) => {
+  try {
+   let user = await sizeChart.find(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateSizeChart = async (req, res) => {
+  try {
+   let user = await sizeChart.findByIdAndUpdate(req.body._id,req.body,{
+    new:true
+   })
+    
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteSizeChart = async (req, res) => {
+  try {
+   let user = await sizeChart.findByIdAndDelete(req.body._id)
     
     return res.status(200).json({
       data: user,
