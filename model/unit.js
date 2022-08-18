@@ -3,6 +3,7 @@ let unitSchema = mongoose.Schema({
 
     title: {
         type: String,
+        required:true
     },
     is_active : {
         type: Boolean,
