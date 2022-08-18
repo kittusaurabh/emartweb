@@ -3,7 +3,6 @@ let categorySchema = mongoose.Schema({
     
     category: {
         type: String,
-        required:true
     },
     description: {
         type: String,

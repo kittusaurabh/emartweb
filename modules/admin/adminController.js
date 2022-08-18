@@ -272,7 +272,6 @@ exports.deleteSeller = async (req, res) => {
 exports.addCategory = async (req, res) => {
   try {
    let user = await Category.create(req.body)
-    
     return res.status(200).json({
       data: user,
       message: "Success",

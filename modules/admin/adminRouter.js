@@ -2,6 +2,8 @@ const express = require('express');
 const multer = require('multer');
 const router = express.Router();
 const adminController = require('./adminController');
+const uploadController = require("../../common/commonController");
+
 // const auth = require('../../common/middelware')
 
 

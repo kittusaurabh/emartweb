@@ -5,17 +5,8 @@ const router = express.Router();
 
 
 
-router.post("/imgUpload", uploadController.uploadMedia_image, (req, res) => {
-    try {
-        console.log(req.file)
-         res.status(200).send({
-            path: req.file.location
-        });
-    } catch (e) {
-        return res.status(400).json({
-            message: e.message
-        });
-    }
-})
+router.post("/imgUpload", uploadController.upload_image)
+router.post("/sheetUpload", uploadController.upload_sheet)
+
 
 exports.Router = router;
