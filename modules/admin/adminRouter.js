@@ -3,6 +3,11 @@ const router = express.Router();
 const adminController = require('./adminController');
 // const auth = require('../../common/middelware')
 
+
+
+
+
+
 router.post("/login", adminController.login)
 router.post('/logout',adminController.logout)
 router.post("/changePassword", adminController.changepassword)
