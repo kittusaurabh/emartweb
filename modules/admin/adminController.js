@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const md5 = require("md5");
 const Joi = require("joi");
+const multer = require("multer");
 const adminModel = require("../../model/adminModel");
 const User = require("../../model/customerModel");
 const Seller = require("../../model/sellerModel");
@@ -270,7 +271,8 @@ exports.deleteSeller = async (req, res) => {
 
 exports.addCategory = async (req, res) => {
   try {
-   let user = await Category.create(req.body)    
+   let user = await Category.create(req.body)
+    
     return res.status(200).json({
       data: user,
       message: "Success",
@@ -299,6 +301,8 @@ exports.getCategory = async (req, res) => {
 };
 exports.updateCategory = async (req, res) => {
   try {
+    console.log(req.file);
+    console.log(req.body);
    let user = await Category.findByIdAndUpdate(req.body._id,req.body,{
     new:true
    })
@@ -334,6 +338,11 @@ exports.deleteCategory = async (req, res) => {
 
 exports.addSubCategory = async (req, res) => {
   try {
+    if(!req.body.categoryId||!req.body.subCategory||!req.body.description){
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
    let user = await subCategory.create(req.body)
     
     return res.status(200).json({
@@ -400,6 +409,11 @@ exports.deleteSubCategory = async (req, res) => {
 
 exports.addChildCategory = async (req, res) => {
   try {
+    if(!req.body.categoryId||!req.body.subCategoryId||!req.body.childCategory||!req.body.description){
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
    let user = await childCategory.create(req.body)
     
     return res.status(200).json({
@@ -466,6 +480,11 @@ exports.deleteChildCategory = async (req, res) => {
 
 exports.addBrand = async (req, res) => {
   try {
+    if(!req.body.brandName||!req.body.CategoryId||!req.body.brandLogo){
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
    let user = await Brands.create(req.body)
     
     return res.status(200).json({
@@ -531,17 +550,69 @@ exports.deleteBrand = async (req, res) => {
 
 
 exports.addStore = async (req, res) => {
-  try {
-   let user = await Store.create(req.body)
-    
-    return res.status(200).json({
-      data: user,
-      message: "Success",
-    });
+  // Validate request parameters, queries using express-validator
+  let {
+    storeOwner,
+    storeName,
+    businessEmail,
+    mobile,
+    storeAddress,
+    country,
+    state,
+    city
+  } = req.body;
 
-  } catch (error) {
+  const schema = Joi.object({
+    storeOwner: Joi.string().required(),
+    storeName: Joi.string().required(),
+    businessEmail: Joi.string().email().required(),
+    mobile: Joi.string().required().allow(""),
+    storeAddress: Joi.string().required(),
+    country: Joi.string().required(),
+    state: Joi.string().required(),
+    city: Joi.string().required(),
+  });
+
+  const options = {
+    abortEarly: false, // include all errors
+    allowUnknown: true, // ignore unknown props
+    stripUnknown: true, // remove unknown props
+  };
+
+  // validate request body against schema
+  const { error, value } = schema.validate(req.body, options);
+
+  if (error) {
     return res.status(400).json({
-      message: error.message,
+      message: `Validation error: ${error.details[0].message}`,
+    });
+  }
+
+  let userData = req.body;
+  try {
+    let isExists = await Store.findOne({
+      $or: [
+        {
+          businessEmail: userData.businessEmail,
+        },
+        {
+          mobile: userData.mobile,
+        },
+      ],
+    });
+    if (isExists) {
+      return res.status(400).json({
+        message: "Store Already Exists",
+      });
+    }
+    var users = await Store.create(userData);
+    return res.status(200).json({
+      data: users,
+      message: "Successfully Created",
+    });
+  } catch (e) {
+    return res.status(400).json({
+      message: e.message,
     });
   }
 };
@@ -725,8 +796,83 @@ exports.deleteProduct = async (req, res) => {
 };
 
 
+exports.addCoupon = async (req, res) => {
+  try {
+    if(!req.body.couponCode||!req.body.discountType||!req.body.amount||!req.body.linkedTo||!req.body.variantId||!req.body.productId||!req.body.maxUsageLimit){
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
+   let user = await Coupon.create(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getCoupon = async (req, res) => {
+  try {
+   let user = await Coupon.find(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateCoupon = async (req, res) => {
+  try {
+   let user = await Coupon.findByIdAndUpdate(req.body._id,req.body,{
+    new:true
+   })
+    
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteCoupon = async (req, res) => {
+  try {
+   let user = await Coupon.findByIdAndDelete(req.body._id)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+
+
 exports.addReturnPolicy = async (req, res) => {
   try {
+    if(!req.body.policyName||!req.body.amount||!req.body.returnDays||!req.body.discription){
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
    let user = await Return.create(req.body)
     
     return res.status(200).json({
@@ -789,9 +935,10 @@ exports.deleteReturnPolicy = async (req, res) => {
 };
 
 
-exports.addCoupon = async (req, res) => {
+
+exports.addUnit = async (req, res) => {
   try {
-   let user = await Coupon.create(req.body)
+   let user = await Unit.create(req.body)
     
     return res.status(200).json({
       data: user,
@@ -804,9 +951,9 @@ exports.addCoupon = async (req, res) => {
     });
   }
 };
-exports.getCoupon = async (req, res) => {
+exports.getUnit = async (req, res) => {
   try {
-   let user = await Coupon.find(req.body)
+   let user = await Unit.find(req.body)
     
     return res.status(200).json({
       data: user,
@@ -819,9 +966,9 @@ exports.getCoupon = async (req, res) => {
     });
   }
 };
-exports.updateCoupon = async (req, res) => {
+exports.updateUnit = async (req, res) => {
   try {
-   let user = await Coupon.findByIdAndUpdate(req.body._id,req.body,{
+   let user = await Unit.findByIdAndUpdate(req.body._id,req.body,{
     new:true
    })
     
@@ -836,9 +983,9 @@ exports.updateCoupon = async (req, res) => {
     });
   }
 };
-exports.deleteCoupon = async (req, res) => {
+exports.deleteUnit = async (req, res) => {
   try {
-   let user = await Coupon.findByIdAndDelete(req.body._id)
+   let user = await Unit.findByIdAndDelete(req.body._id)
     
     return res.status(200).json({
       data: user,
@@ -918,72 +1065,14 @@ exports.deleteSpecialOffer = async (req, res) => {
 };
 
 
-exports.addUnit = async (req, res) => {
-  try {
-   let user = await Unit.create(req.body)
-    
-    return res.status(200).json({
-      data: user,
-      message: "Success",
-    });
-
-  } catch (error) {
-    return res.status(400).json({
-      message: error.message,
-    });
-  }
-};
-exports.getUnit = async (req, res) => {
-  try {
-   let user = await Unit.find(req.body)
-    
-    return res.status(200).json({
-      data: user,
-      message: "Success",
-    });
-
-  } catch (error) {
-    return res.status(400).json({
-      message: error.message,
-    });
-  }
-};
-exports.updateUnit = async (req, res) => {
-  try {
-   let user = await Unit.findByIdAndUpdate(req.body._id,req.body,{
-    new:true
-   })
-    
-    return res.status(200).json({
-      data: user,
-      message: "Updated",
-    });
-
-  } catch (error) {
-    return res.status(400).json({
-      message: error.message,
-    });
-  }
-};
-exports.deleteUnit = async (req, res) => {
-  try {
-   let user = await Unit.findByIdAndDelete(req.body._id)
-    
-    return res.status(200).json({
-      data: user,
-      message: "Deleted",
-    });
-
-  } catch (error) {
-    return res.status(400).json({
-      message: error.message,
-    });
-  }
-};
-
 
 exports.addSizeChart = async (req, res) => {
   try {
+    if(!req.body.tamplateName||!req.body.tamplateCode||!req.body.TamplateOptions){
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
    let user = await sizeChart.create(req.body)
     
     return res.status(200).json({
