@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const md5 = require("md5");
 const Joi = require("joi");
-const multer = require("multer");
 const adminModel = require("../../model/adminModel");
 const User = require("../../model/customerModel");
 const Seller = require("../../model/sellerModel");
@@ -13,11 +12,12 @@ const Store = require("../../model/store");
 const Variant = require("../../model/variantProduct");
 const Product = require("../../model/Product");
 const Return = require("../../model/returnPolicy");
-const Coupon = require("../../model/coupon")
-const specialOffer = require("../../model/specialOffer")
-const Unit = require("../../model/Unit")
-const sizeChart = require("../../model/sizeChart")
-
+const Coupon = require("../../model/coupon");
+const specialOffer = require("../../model/specialOffer");
+const Unit = require("../../model/Unit");
+const sizeChart = require("../../model/sizeChart");
+const Menu = require("../../model/menu");
+const footerMenu = require("../../model/footerMenu");
 
 
 
@@ -1120,6 +1120,142 @@ exports.updateSizeChart = async (req, res) => {
 exports.deleteSizeChart = async (req, res) => {
   try {
    let user = await sizeChart.findByIdAndDelete(req.body._id)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+
+
+exports.addMenu = async (req, res) => {
+  try {
+    if(!req.body.menuName){
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
+   let user = await Menu.create(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getMenu = async (req, res) => {
+  try {
+   let user = await Menu.find(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateMenu = async (req, res) => {
+  try {
+   let user = await Menu.findByIdAndUpdate(req.body._id,req.body,{
+     new:true
+    })    
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteMenu = async (req, res) => {
+  try {
+   let user = await Menu.findByIdAndDelete(req.body._id)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.addFooterMenu = async (req, res) => {
+  try {
+    if(!req.body.menuTitle||!req.body.linkBy||!req.body.widgetPosition){
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
+   let user = await footerMenu.create(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getFooterMenu = async (req, res) => {
+  try {
+   let user = await footerMenu.find(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateFooterMenu = async (req, res) => {
+  try {
+   let user = await footerMenu.findByIdAndUpdate(req.body._id,req.body,{
+     new:true
+    })    
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteFooterMenu = async (req, res) => {
+  try {
+   let user = await footerMenu.findByIdAndDelete(req.body._id)
     
     return res.status(200).json({
       data: user,

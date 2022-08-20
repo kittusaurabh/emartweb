@@ -2,8 +2,6 @@ const express = require('express');
 const multer = require('multer');
 const router = express.Router();
 const adminController = require('./adminController');
-const uploadController = require("../../common/commonController");
-
 // const auth = require('../../common/middelware')
 
 
@@ -77,8 +75,6 @@ router.post('/deleteCoupon',adminController.deleteCoupon)
 
 
 
-
-
 router.post('/addReturnPolicy',adminController.addReturnPolicy)
 router.get('/getReturnPolicy',adminController.getReturnPolicy)
 router.post('/updateReturnPolicy',adminController.updateReturnPolicy)
@@ -104,6 +100,22 @@ router.post('/addSizeChart',adminController.addSizeChart)
 router.get('/getSizeChart',adminController.getSizeChart)
 router.post('/updateSizeChart',adminController.updateSizeChart)
 router.post('/deleteSizeChart',adminController.deleteSizeChart)
+
+
+
+router.post('/addMenu',adminController.addMenu)
+router.get('/getMenu',adminController.getMenu)
+router.post('/updateMenu',adminController.updateMenu)
+router.post('/deleteMenu',adminController.deleteMenu)
+
+
+
+router.post('/addFooterMenu',adminController.addFooterMenu)
+router.get('/getFooterMenu',adminController.getFooterMenu)
+router.post('/updateFooterMenu',adminController.updateFooterMenu)
+router.post('/deleteFooterMenu',adminController.deleteFooterMenu)
+
+
 
 
 

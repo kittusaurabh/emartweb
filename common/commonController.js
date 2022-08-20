@@ -13,7 +13,7 @@ const storage_image = multer.diskStorage({
 })
 var upload_image = multer({
     storage: storage_image
-})
+});
 
 exports.upload_image = function (req, res, next) {
     upload_image.single('media')(req, res, function (err, some) {
