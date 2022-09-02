@@ -1,6 +1,6 @@
 const md5 = require("md5");
 const Joi = require("joi");
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");  
 const User = require("../../model/customerModel");
 
 exports.signup = async (req, res) => {
@@ -44,13 +44,13 @@ exports.signup = async (req, res) => {
     });
   }
 
-  let userData = req.body;
+   let userData = req.body;
   userData.user_email = userData.user_email.toLowerCase();
 
   userData.password = md5(userData.password);
 
   var token = jwt.sign(
-    {
+     {
       user_email: userData.user_email,
     },
     "supersecret"
@@ -64,7 +64,7 @@ exports.signup = async (req, res) => {
         },
         {
           mobile_number: userData.mobile_number,
-        },
+         },
       ],
     });
     if (isExists) {
@@ -81,7 +81,7 @@ exports.signup = async (req, res) => {
     return res.status(400).json({
       message: e.message,
     });
-  }
+   }
 };
 exports.login = async (req, res) => {
   let { user_email, password } = req.body;
@@ -92,7 +92,7 @@ exports.login = async (req, res) => {
   });
 
   const options = {
-    abortEarly: false, // include all errors
+    abortEarly: false, // include all errors 
     allowUnknown: true, // ignore unknown props
     stripUnknown: true, // remove unknown props
   };
@@ -184,7 +184,7 @@ exports.logout = async (req, res) => {
       });
     }
     return res.status(400).json({
-      message: "Could Not Logout, Please Try Again",
+     message: "Could Not Logout, Please Try Again",
     });
   } catch (e) {
     return res.status(400).json({

@@ -2,6 +2,7 @@ const Joi = require("joi");
 const md5 = require("md5");
 const jwt = require("jsonwebtoken");
 const Seller = require("../../model/sellerModel");
+const Gift = require('../../model/gift')
 
 exports.signup = async (req, res) => {
   // Validate request parameters, queries using express-validator
@@ -13,7 +14,7 @@ exports.signup = async (req, res) => {
     country,
     state,
     city,
-    profile_picture,
+    profile_picture,  
     password
   } = req.body;
 
@@ -41,7 +42,7 @@ exports.signup = async (req, res) => {
     return res.status(400).json({
       message: `Validation error: ${error.details[0].message}`,
     });
-  }
+     }
 
   let userData = req.body;
   userData.buisness_email = userData.buisness_email.toLowerCase();
@@ -270,5 +271,72 @@ exports.changePassword = async (req, res) => {
     });
   } catch (error) {
     res.status(403).json(error.message);
+  }
+};
+
+exports.addGift = async (req, res) => {
+  try {
+    if(!req.body.title||!req.body.giftCode||!req.body.amount||!req.body.maxUsageLimit||!req.body.expiryDate){
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
+   let user = await Gift.create(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getGift = async (req, res) => {
+  try {
+   let user = await Gift.find(req.body)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateGift = async (req, res) => {
+  try {
+    let user = await Gift.findByIdAndUpdate(req.body._id,req.body,{
+      new:true
+     })
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteGift = async (req, res) => {
+  try {
+   let user = await Gift.findByIdAndDelete(req.body._id)
+    
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
   }
 };

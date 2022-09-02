@@ -54,12 +54,6 @@ router.post('/updateStore',adminController.updateStore)
 router.post('/deleteStore',adminController.deleteStore)
 
 
-router.post('/addVariantProduct',adminController.addVariantProduct)
-router.get('/getVariantProduct',adminController.getVariantProduct)
-router.post('/updateVariantProduct',adminController.updateVariantProduct)
-router.post('/deleteVariantProduct',adminController.deleteVariantProduct)
-
-
 
 router.post('/addProduct',adminController.addProduct)
 router.get('/getProduct',adminController.getProduct)

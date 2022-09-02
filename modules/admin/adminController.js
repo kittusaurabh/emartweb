@@ -9,7 +9,6 @@ const subCategory = require("../../model/subCategory");
 const childCategory = require("../../model/childCategory");
 const Brands = require("../../model/brandModel");
 const Store = require("../../model/store");
-const Variant = require("../../model/variantProduct");
 const Product = require("../../model/Product");
 const Return = require("../../model/returnPolicy");
 const Coupon = require("../../model/coupon");
@@ -18,6 +17,7 @@ const Unit = require("../../model/Unit");
 const sizeChart = require("../../model/sizeChart");
 const Menu = require("../../model/menu");
 const footerMenu = require("../../model/footerMenu");
+const utility = require("../../common/utility");
 
 
 
@@ -128,7 +128,7 @@ exports.changepassword = async (req, res) => {
       },
       {
         password: md5(req.body.password),
-      },
+       },
       {
         new: true,
       }
@@ -136,7 +136,7 @@ exports.changepassword = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         message: "invalid details",
-      });
+       });
     }
     return res.status(200).json({
       data: user,
@@ -200,15 +200,12 @@ exports.deleteuser = async (req, res) => {
       data: user,
       message: "Deleted",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
     });
   }
 };
-
-
 
 exports.isBlocked_seller = async (req, res) => {
   try {
@@ -271,6 +268,17 @@ exports.deleteSeller = async (req, res) => {
 
 exports.addCategory = async (req, res) => {
   try {
+    if (req.body.sheet_url) {
+      let file_name = (req.body.sheet_url).split('/')
+      file_name = file_name[file_name.length - 1];
+      let sheetJson = utility.exel2json(file_name)
+      console.log(sheetJson);
+      for (let i = 0; i < sheetJson.length; i++)
+        await Category.create(sheetJson[i])
+      return res.status(200).json({
+        message: "Successful import Category",
+      });
+    }
    let user = await Category.create(req.body)
     return res.status(200).json({
       data: user,
@@ -337,6 +345,17 @@ exports.deleteCategory = async (req, res) => {
 
 exports.addSubCategory = async (req, res) => {
   try {
+    if (req.body.sheet_url) {
+      let file_name = (req.body.sheet_url).split('/')
+      file_name = file_name[file_name.length - 1];
+      let sheetJson = utility.exel2json(file_name)
+      console.log(sheetJson);
+      for (let i = 0; i < sheetJson.length; i++)
+        await subCategory.create(sheetJson[i])
+      return res.status(200).json({
+        message: "Successful import Subcategory",
+      });
+    }
     if(!req.body.categoryId||!req.body.subCategory||!req.body.description){
       return res.status(400).json({
         message: "Keys is Missing",
@@ -404,10 +423,19 @@ exports.deleteSubCategory = async (req, res) => {
 };
 
 
-
-
 exports.addChildCategory = async (req, res) => {
   try {
+    if (req.body.sheet_url) {
+      let file_name = (req.body.sheet_url).split('/')
+      file_name = file_name[file_name.length - 1];
+      let sheetJson = utility.exel2json(file_name)
+      console.log(sheetJson);
+      for (let i = 0; i < sheetJson.length; i++)
+        await childCategory.create(sheetJson[i])
+      return res.status(200).json({
+        message: "Successful import Child Category",
+      });
+    }
     if(!req.body.categoryId||!req.body.subCategoryId||!req.body.childCategory||!req.body.description){
       return res.status(400).json({
         message: "Keys is Missing",
@@ -479,6 +507,17 @@ exports.deleteChildCategory = async (req, res) => {
 
 exports.addBrand = async (req, res) => {
   try {
+    if (req.body.sheet_url) {
+      let file_name = (req.body.sheet_url).split('/')
+      file_name = file_name[file_name.length - 1];
+      let sheetJson = utility.exel2json(file_name)
+      console.log(sheetJson);
+      for (let i = 0; i < sheetJson.length; i++)
+        await Brands.create(sheetJson[i])
+      return res.status(200).json({
+        message: "Successful import Brands",
+      });
+    }
     if(!req.body.brandName||!req.body.CategoryId||!req.body.brandLogo){
       return res.status(400).json({
         message: "Keys is Missing",
@@ -582,7 +621,7 @@ exports.addStore = async (req, res) => {
   const { error, value } = schema.validate(req.body, options);
 
   if (error) {
-    return res.status(400).json({
+    return res.status(400).json({ 
       message: `Validation error: ${error.details[0].message}`,
     });
   }
@@ -665,76 +704,21 @@ exports.deleteStore = async (req, res) => {
 
 
 
-
-exports.addVariantProduct = async (req, res) => {
-  try {
-   let user = await Variant.create(req.body)
-    
-    return res.status(200).json({
-      data: user,
-      message: "Success",
-    });
-
-  } catch (error) {
-    return res.status(400).json({
-      message: error.message,
-    });
-  }
-};
-exports.getVariantProduct = async (req, res) => {
-  try {
-   let user = await Variant.find(req.body)
-    
-    return res.status(200).json({
-      data: user,
-      message: "Success",
-    });
-
-  } catch (error) {
-    return res.status(400).json({
-      message: error.message,
-    });
-  }
-};
-exports.updateVariantProduct = async (req, res) => {
-  try {
-   let user = await Variant.findByIdAndUpdate(req.body._id,req.body,{
-    new:true
-   })
-    
-    return res.status(200).json({
-      data: user,
-      message: "Updated",
-    });
-
-  } catch (error) {
-    return res.status(400).json({
-      message: error.message,
-    });
-  }
-};
-exports.deleteVariantProduct = async (req, res) => {
-  try {
-   let user = await Variant.findByIdAndDelete(req.body._id)
-    
-    return res.status(200).json({
-      data: user,
-      message: "Deleted",
-    });
-
-  } catch (error) {
-    return res.status(400).json({
-      message: error.message,
-    });
-  }
-};
-
-
-
 exports.addProduct = async (req, res) => {
   try {
-   let user = await Product.create(req.body)
-    
+    if (req.body.sheet_url) {
+      let file_name = (req.body.sheet_url).split('/')
+      file_name = file_name[file_name.length - 1];
+      let sheetJson = utility.exel2json(file_name)
+      console.log(sheetJson);
+      for (let i = 0; i < sheetJson.length; i++)
+        await Product.create(sheetJson[i])
+      return res.status(200).json({
+        message: "Successful import productes",
+      });
+    }
+    let user = await Product.create(req.body)
+ 
     return res.status(200).json({
       data: user,
       message: "Success",
@@ -797,7 +781,7 @@ exports.deleteProduct = async (req, res) => {
 
 exports.addCoupon = async (req, res) => {
   try {
-    if(!req.body.couponCode||!req.body.discountType||!req.body.amount||!req.body.linkedTo||!req.body.variantId||!req.body.productId||!req.body.maxUsageLimit){
+    if(!req.body.couponCode||!req.body.discountType||!req.body.amount||!req.body.linkedTo||!req.body.productId||!req.body.maxUsageLimit){
       return res.status(400).json({
         message: "Keys is Missing",
       });
@@ -933,8 +917,6 @@ exports.deleteReturnPolicy = async (req, res) => {
   }
 };
 
-
-
 exports.addUnit = async (req, res) => {
   try {
    let user = await Unit.create(req.body)
@@ -950,6 +932,7 @@ exports.addUnit = async (req, res) => {
     });
   }
 };
+
 exports.getUnit = async (req, res) => {
   try {
    let user = await Unit.find(req.body)

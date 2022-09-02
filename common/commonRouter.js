@@ -1,7 +1,6 @@
-const uploadController = require("./commonController");
+const uploadController = require("./commonController")
 const express = require("express");
 const router = express.Router();
-// const path = require('path')
 
 
 
