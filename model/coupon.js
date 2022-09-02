@@ -13,14 +13,10 @@ let couponSchema = mongoose.Schema({
     },
     linkedTo: {
         type: String,
-        enum:["Link to Cart","Link by Variant Product","Link by Simple Product","Link by Category"]
+        enum:["Link to Cart","Link by ","Link by Product","Link by Category"]
     },
     maxUsageLimit: {
         type: String,
-    },
-    variantProductId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:"Variant"
     },
     ProductId: {
         type: mongoose.Schema.Types.ObjectId,

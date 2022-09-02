@@ -2,14 +2,14 @@ const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 const adminModel = require('../model/adminModel');
 const User = require('../model/customerModel');
 const Seller = require('../model/sellerModel')
-
+ 
 
 exports.adminVerifyToken = (req, res, next) => {
 
     // console.log("access_token", req.headers)1
 
     // check header or url parameters or post parameters for token
-    const token = req.headers.access_token;
+      const token = req.headers.access_token;
 
     // console.log("language=========", req.headers.language)1
 

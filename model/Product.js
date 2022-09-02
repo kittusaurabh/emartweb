@@ -1,11 +1,11 @@
 let mongoose = require('mongoose')
 let productSchema = mongoose.Schema({
 
-    productType: {
+    productType: {   
         type: String,
         enum:['0','1','2']
     },
-    productName: {
+    productName: {     
         type: String,
     },
     productLink: {
@@ -58,6 +58,9 @@ let productSchema = mongoose.Schema({
     productTagBackgroundColor: {
         type: String,
     },
+    productCatalogue: {
+        type: String,
+    },
     model: {
         type: String,
     },
@@ -73,6 +76,17 @@ let productSchema = mongoose.Schema({
     offerPrice: {
         type: String,
     },
+    type: {
+        type: String,
+        enum:["gaurantee","warranty"]
+    },
+    daysMonthsYear: {
+         type: String,
+        enum:["none","day","months","year"]
+    },
+    startSellingFrom: {
+        type: String,
+    },
     weight:{
         type:String
     },
@@ -82,11 +96,37 @@ let productSchema = mongoose.Schema({
     taxName: {
         type: String,
     },
+    taxApplied: {
+        type: String,
+    },
+    taxClass: {
+        type: String,
+        enum:["GST","US Tax"]
+    },
+    productTagTextColor: {
+        type: String,
+    },
+    productTagBackgroundColor: {
+        type: String,
+    },
     productThumbnailImage: {
         type: String,
     },
     productHoverThumbnailImage: {
         type: String,
+    },
+    productVideoPreview: {
+        type: String,
+    },
+    productVideoThumbnail: {
+        type: String,
+    },
+    giftPackingCharges: {
+        type: String,
+    },
+    priceIncludeTax : {
+        type: Boolean,
+        default:false
     },
     otherProductImages:{
         type:String
