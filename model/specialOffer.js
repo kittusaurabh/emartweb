@@ -1,6 +1,6 @@
 let mongoose = require('mongoose')
 let specialOfferSchema = mongoose.Schema({
-    
+               
     productId: {
         type: mongoose.Schema.Types.ObjectId,
         ref:"Product"

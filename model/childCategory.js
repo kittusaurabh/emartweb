@@ -9,6 +9,9 @@ let childCategorySchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:"subCategory"
     },
+    childCategory: {
+        type: String
+    },
     icon: {
         type: String,
     },

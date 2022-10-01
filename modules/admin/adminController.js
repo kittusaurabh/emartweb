@@ -6,7 +6,7 @@ const User = require("../../model/customerModel");
 const Seller = require("../../model/sellerModel");
 const Category = require("../../model/category");
 const subCategory = require("../../model/subCategory");
-const childCategory = require("../../model/childCategory");
+  const childCategory = require("../../model/childCategory");
 const Brands = require("../../model/brandModel");
 const Store = require("../../model/store");
 const Product = require("../../model/Product");
@@ -19,7 +19,7 @@ const Menu = require("../../model/menu");
 const footerMenu = require("../../model/footerMenu");
 const utility = require("../../common/utility");
 
-
+         
 
 exports.login = async function (req, res, next) {
   let {
@@ -99,7 +99,7 @@ exports.logout = async (req, res) => {
   try {
     let user = await adminModel.findByIdAndUpdate(
       req.body._id,
-      {
+       {
         access_token: "",
       },
       {
@@ -1050,7 +1050,7 @@ exports.deleteSpecialOffer = async (req, res) => {
 
 exports.addSizeChart = async (req, res) => {
   try {
-    if(!req.body.tamplateName||!req.body.tamplateCode||!req.body.TamplateOptions){
+    if(!req.body.tamplateName||!req.body.tamplateCode||!req.body.tamplateOption){
       return res.status(400).json({
         message: "Keys is Missing",
       });
@@ -1236,6 +1236,7 @@ exports.updateFooterMenu = async (req, res) => {
     });
   }
 };
+
 exports.deleteFooterMenu = async (req, res) => {
   try {
    let user = await footerMenu.findByIdAndDelete(req.body._id)

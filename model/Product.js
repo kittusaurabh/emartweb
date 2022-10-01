@@ -1,6 +1,6 @@
 let mongoose = require('mongoose')
 let productSchema = mongoose.Schema({
-
+ 
     productType: {   
         type: String,
         enum:['0','1','2']
