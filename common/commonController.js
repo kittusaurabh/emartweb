@@ -50,11 +50,11 @@ exports.upload_sheet = function (req, res, next) {
     upload_sheet.single('media')(req, res, function (err, some) {
         // console.log(req);
         if (err) {
-            return res.status(400).json({
-                errors: [{
+            return res.status(400).json({ 
+                 errors: [{
                     title: 'sheet Upload Error',
                     detail: err.message
-                }]
+                 }]
             });
         }
         return res.status(200).json({
@@ -63,4 +63,4 @@ exports.upload_sheet = function (req, res, next) {
         });
         next();
     });
-}
+}         

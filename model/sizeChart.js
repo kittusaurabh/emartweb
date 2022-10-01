@@ -1,13 +1,13 @@
 let mongoose = require('mongoose')
 let sizeChartSchema = mongoose.Schema({
     
-    templateName: {
+    tamplateName: {
         type: String,
     },
-    templateCode: {
+    tamplateCode: {
         type: String,
     },
-    templateOption: {
+    tamplateOption: {
         type: String,
     },
     is_active : {
