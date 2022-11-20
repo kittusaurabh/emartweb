@@ -2,27 +2,20 @@ const md5 = require("md5");
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const User = require("../../model/customerModel");
-const AddressModel = require("../../model/address");
+const AddressModel = require("../../model/addressModel");
 const cartModel = require("../../model/cartModel");
-const sellerModel = require("../../model/sellerModel");
+const Seller = require("../../model/sellerModel");
 const Product = require("../../model/Product");
-const Order = require('../../model/orderModel')
+const Order = require("../../model/orderModel");
 const utility = require("../../common/utility");
- 
+const Store = require("../../model/store");
+const productItemRatingModel = require("../../model/productRatingItem");
+const wishlist = require("../../model/wishlist");
+const Transaction = require("../../model/transection");
+const Bank = require("../../model/bankModel");
+
 exports.signup = async (req, res) => {
   // Validate request parameters, queries using express-validator
-  let {
-    profile_image,
-    user_name,
-    user_email,
-    mobile_number,
-    phone_number,
-    city,
-    state,
-    country,
-    user_image,
-    password,
-  } = req.body;
 
   const schema = Joi.object({
     user_name: Joi.string().required(),
@@ -42,10 +35,7 @@ exports.signup = async (req, res) => {
   };
 
   // validate request body against schema
-  const {
-    error,
-    value
-  } = schema.validate(req.body, options);
+  const { error, value } = schema.validate(req.body, options);
 
   if (error) {
     return res.status(400).json({
@@ -58,7 +48,8 @@ exports.signup = async (req, res) => {
 
   userData.password = md5(userData.password);
 
-  var token = jwt.sign({
+  var token = jwt.sign(
+    {
       user_email: userData.user_email,
     },
     "supersecret"
@@ -66,7 +57,8 @@ exports.signup = async (req, res) => {
   userData.access_token = token;
   try {
     let isExists = await User.findOne({
-      $or: [{
+      $or: [
+        {
           user_email: userData.user_email,
         },
         {
@@ -79,6 +71,7 @@ exports.signup = async (req, res) => {
         message: "Email Or Phone Number Already Exists",
       });
     }
+    userData.refer_id = utility.randomString(6);
     var users = await User.create(userData);
     await cartModel.create({
       user_id: users._id,
@@ -94,10 +87,7 @@ exports.signup = async (req, res) => {
   }
 };
 exports.login = async (req, res) => {
-  let {
-    user_email,
-    password
-  } = req.body;
+  let { user_email, password } = req.body;
 
   const schema = Joi.object({
     user_email: Joi.string().email().required(),
@@ -105,16 +95,13 @@ exports.login = async (req, res) => {
   });
 
   const options = {
-    abortEarly: false, // include all errors 
+    abortEarly: false, // include all errors
     allowUnknown: true, // ignore unknown props
     stripUnknown: true, // remove unknown props
   };
 
   // validate request body against schema
-  const {
-    error,
-    value
-  } = schema.validate(req.body, options);
+  const { error, value } = schema.validate(req.body, options);
 
   if (error) {
     return res.status(400).json({
@@ -134,20 +121,25 @@ exports.login = async (req, res) => {
         message: "Incorrect email or password",
       });
     }
-    var token = jwt.sign({
+    var token = jwt.sign(
+      {
         user_email: userData.user_email,
       },
       "supersecret"
     );
-    let update = await User.findOneAndUpdate({
-      user_email: userData.user_email,
-    }, {
-      $set: {
-        access_token: token,
+    let update = await User.findOneAndUpdate(
+      {
+        user_email: userData.user_email,
       },
-    }, {
-      new: true,
-    });
+      {
+        $set: {
+          access_token: token,
+        },
+      },
+      {
+        new: true,
+      }
+    );
 
     return res.status(200).json({
       data: update,
@@ -178,9 +170,11 @@ exports.update = async (req, res) => {
 exports.logout = async (req, res) => {
   try {
     let user = await User.findByIdAndUpdate(
-      req.body._id, {
+      req.body._id,
+      {
         access_token: "",
-      }, {
+      },
+      {
         new: true,
       }
     );
@@ -200,13 +194,17 @@ exports.logout = async (req, res) => {
 };
 exports.forgetpassword = async (req, res) => {
   try {
-    let user = await User.findByIdAndUpdate({
-      _id: req.body._id,
-    }, {
-      password: md5(req.body.password),
-    }, {
-      new: true,
-    });
+    let user = await User.findByIdAndUpdate(
+      {
+        _id: req.body._id,
+      },
+      {
+        password: md5(req.body.password),
+      },
+      {
+        new: true,
+      }
+    );
     if (!user) {
       return res.status(400).json({
         message: "invalid details",
@@ -224,10 +222,7 @@ exports.forgetpassword = async (req, res) => {
 };
 exports.changePassword = async (req, res) => {
   try {
-    let {
-      old_password,
-      new_password
-    } = req.body;
+    let { old_password, new_password } = req.body;
     if (!old_password) {
       //must
       return res.status(403).json({
@@ -261,11 +256,14 @@ exports.changePassword = async (req, res) => {
       });
     }
     let isUpdated = await User.findByIdAndUpdate(
-      req.body._id, {
+      req.body._id,
+      {
         password: md5(new_password),
-      }, {
+      },
+      {
         new: true,
-      });
+      }
+    );
 
     return res.status(200).json({
       message: "Successfully changed password",
@@ -369,10 +367,10 @@ exports.updateAddress = async (req, res) => {
 exports.getAddress = async (req, res) => {
   try {
     let user_id = req.userData._id;
-    let address_id = req.query.address_id;
+    // let address_id = req.query.address_id;
     console.log("user id::::", user_id);
 
-    let newAdd = await AddressModel.find(req.body);
+    let newAdd = await AddressModel.find(req.query);
     return res.status(200).json({
       message: "Successfully Fetched.",
       data: newAdd,
@@ -409,7 +407,6 @@ exports.removeAddress = async (req, res) => {
   }
 };
 
-
 // exports.getAddressList = async (req, res) => {
 //   try {
 //     let user_id = req.userData._id;
@@ -423,16 +420,12 @@ exports.removeAddress = async (req, res) => {
 //       modules = req.query.modules;
 //       let data = [];
 //       let key_name =
-//         modules == 0
-//           ? "store_radious"
-//           : modules == 1
-//           ? "seller_radious"
-//           : null;
+//         modules == 0 ? "store_radious" : modules == 1 ? "seller_radious" : null;
 //       let panel =
 //         modules == 0
-//           ? await branchModel.findById(req.query.panel_id)
+//           ? await Store.findById(req.query.panel_id)
 //           : modules == 2
-//           ? await SellerModel.findById(req.query.panel_id)
+//           ? await Seller.findById(req.query.panel_id)
 //           : null;
 //       for (let i = 0; i < newAdd.length; i++) {
 //         let distance = commonFunc.distance_of_two_cordinates(
@@ -446,7 +439,7 @@ exports.removeAddress = async (req, res) => {
 //       }
 //       if (data.length == 0)
 //         return res.status(400).json({
-//           message: "Restaurant Not Delivere To Your Address Please Add New One",
+//           message: "Not Delivere To Your Address Please Add New One",
 //         });
 //       newAdd = data;
 //     }
@@ -466,7 +459,6 @@ exports.removeAddress = async (req, res) => {
 //   }
 // };
 
-
 async function updateGrandTotal(user_id) {
   let cart = await cartModel
     .findOne({
@@ -481,7 +473,8 @@ async function updateGrandTotal(user_id) {
   if (items.length > 0) {
     cart.total_items_in_cart = items.length;
     for (var i = 0; i < items.length; i++)
-      cart.grand_total_of_cart = cart.grand_total_of_cart + items[i].item_total_price;
+      cart.grand_total_of_cart =
+        cart.grand_total_of_cart + items[i].item_total_price;
   }
   if (items.length == 0) {
     cart.grand_total_of_cart = 0;
@@ -489,18 +482,67 @@ async function updateGrandTotal(user_id) {
     cart.total_items_in_cart = 0;
     cart.seller_id = null;
   }
-  await cartModel.findOneAndUpdate({
-    user_id: user_id,
-  }, {
-    grand_total_of_cart: cart.grand_total_of_cart,
-    total_items_in_cart: cart.total_items_in_cart,
-    items_in_cart: items,
-    store_id: cart.store_id,
-  }, {
-    new: true,
-  });
+  await cartModel.findOneAndUpdate(
+    {
+      user_id: user_id,
+    },
+    {
+      grand_total_of_cart: cart.grand_total_of_cart,
+      total_items_in_cart: cart.total_items_in_cart,
+      items_in_cart: items,
+      store_id: cart.store_id,
+    },
+    {
+      new: true,
+    }
+  );
 }
 
+exports.filterProducts = async (req, res) => {
+  try {
+    let query = {};
+
+    if (req.query.categoryId) {
+      query.categoryId = req.query.categoryId;
+    }
+    if (req.query.subCategoryId) {
+      query.subCategoryId = req.query.subCategoryId;
+    }
+    if (req.query.childCategoryId) {
+      query.childCategoryId = req.query.childCategoryId;
+    }
+    if (req.query.brandId) {
+      query.brandId = req.query.brandId;
+    }
+    if (req.query.productColor) {
+      query.productColor = req.query.productColor;
+    }
+    if (req.query.sizeChart) {
+      query.sizeChart = req.query.sizeChart;
+    }
+    if (req.query.productTagIn) {
+      query.productTagIn = req.query.productTagIn;
+    }
+    if (req.query.weight) {
+      query.weight = req.query.weight;
+    }
+    if (req.query.price) {
+      query.price = [
+        (gte = req.query.price < price),
+        (lte = req.body.price > price),
+      ];
+    }
+    let user = await Product.findOne(req.body);
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
 
 exports.add_item_to_cart = async (req, res) => {
   try {
@@ -515,7 +557,8 @@ exports.add_item_to_cart = async (req, res) => {
       });
 
     cart_item_data.item_unit_price = check_item.price;
-    cart_item_data.item_total_price = check_item.price * Number(cart_item_data.selected_quantity);
+    cart_item_data.item_total_price =
+      check_item.price * Number(cart_item_data.selected_quantity);
 
     cart_item_data.category_id = check_item.category_id;
     cart_item_data.subCategory_id = check_item.subCategory_id;
@@ -530,41 +573,46 @@ exports.add_item_to_cart = async (req, res) => {
       user_id: req.userData._id,
     });
     if (!is_user_cart_exist)
-    return res.status(403).json({
-      message: "Cart Not Found.",
-    });
+      return res.status(403).json({
+        message: "Cart Not Found.",
+      });
 
     let is_item_exist = await cartModel.findOne({
-      "items_in_cart.item_id": cart_item_data.item_id
+      "items_in_cart.item_id": cart_item_data.item_id,
     });
     if (is_item_exist) {
-      let quantity = 1
+      let quantity = 1;
       for (var i = 0; i < is_item_exist.items_in_cart.length; i++) {
         if (
-          req.body.item_id.toString() == is_item_exist.items_in_cart[i].item_id.toString()
+          req.body.item_id.toString() ==
+          is_item_exist.items_in_cart[i].item_id.toString()
         ) {
-          cart.items_in_cart[i].selected_quantity = cart.items_in_cart[i].selected_quantity + Number(quantity);
-          cart.items_in_cart[i].item_total_price = cart.items_in_cart[i].selected_quantity * cart.items_in_cart[i].item_unit_price;
+          cart.items_in_cart[i].selected_quantity =
+            cart.items_in_cart[i].selected_quantity + Number(quantity);
+          cart.items_in_cart[i].item_total_price =
+            cart.items_in_cart[i].selected_quantity *
+            cart.items_in_cart[i].item_unit_price;
         }
       }
-    }
-    else {
-      let cart = await cartModel.findOneAndUpdate({
-        user_id: req.userData._id,
-      }, {
-        $push: {
-          items_in_cart: cart_item_data,
+    } else {
+      let cart = await cartModel.findOneAndUpdate(
+        {
+          user_id: req.userData._id,
         },
-      }, {
-        new: true,
-      });
+        {
+          $push: {
+            items_in_cart: cart_item_data,
+          },
+        },
+        {
+          new: true,
+        }
+      );
       if (!cart)
-      return res.status(400).json({
-        message: "Cart Could Not Be Updated",
-      });
+        return res.status(400).json({
+          message: "Cart Could Not Be Updated",
+        });
     }
-    
-    
 
     let result = await updateGrandTotal(req.userData._id);
 
@@ -589,8 +637,11 @@ exports.increaseQuantity = async (req, res) => {
       if (
         req.body.item_id.toString() == cart.items_in_cart[i].item_id.toString()
       ) {
-        cart.items_in_cart[i].selected_quantity = cart.items_in_cart[i].selected_quantity + Number(quantity);
-        cart.items_in_cart[i].item_total_price = cart.items_in_cart[i].selected_quantity * cart.items_in_cart[i].item_unit_price;
+        cart.items_in_cart[i].selected_quantity =
+          cart.items_in_cart[i].selected_quantity + Number(quantity);
+        cart.items_in_cart[i].item_total_price =
+          cart.items_in_cart[i].selected_quantity *
+          cart.items_in_cart[i].item_unit_price;
       }
     }
     cart = await cart.save();
@@ -616,16 +667,17 @@ exports.decreaseQuantity = async (req, res) => {
     for (var i = 0; i < cart.items_in_cart.length; i++) {
       if (
         req.body.item_id.toString() == cart.items_in_cart[i].item_id.toString()
-
       ) {
-
         if (cart.items_in_cart[i].selected_quantity == 1) {
           return res.status(400).json({
             message: "Cannot Decrease Quantity, Need To Delete The Item",
           });
         }
-        cart.items_in_cart[i].selected_quantity = cart.items_in_cart[i].selected_quantity - Number(quantity);
-        cart.items_in_cart[i].item_total_price = cart.items_in_cart[i].selected_quantity * cart.items_in_cart[i].item_unit_price;
+        cart.items_in_cart[i].selected_quantity =
+          cart.items_in_cart[i].selected_quantity - Number(quantity);
+        cart.items_in_cart[i].item_total_price =
+          cart.items_in_cart[i].selected_quantity *
+          cart.items_in_cart[i].item_unit_price;
       }
     }
     cart = await cart.save();
@@ -644,11 +696,10 @@ exports.decreaseQuantity = async (req, res) => {
 
 exports.getCart = async (req, res) => {
   try {
-    let cart = await cartModel
-      .findOne({user_id: req.userData._id,})
-      // .populate("items_in_cart.item_id")
-      // .populate("items_in_cart.menu_id")
-      // .populate("user_id");
+    let cart = await cartModel.findOne({ user_id: req.userData._id });
+    // .populate("items_in_cart.item_id")
+    // .populate("items_in_cart.menu_id")
+    // .populate("user_id");
 
     if (cart.items_in_cart.length == 0) cart = null;
 
@@ -668,7 +719,7 @@ exports.removeItemFromCart = async (req, res) => {
     });
     for (var i = 0; i < cart.items_in_cart.length; i++) {
       if (
-         req.body.item_id.toString() == cart.items_in_cart[i].item_id.toString()
+        req.body.item_id.toString() == cart.items_in_cart[i].item_id.toString()
       ) {
         var is_deleted = cart.items_in_cart.splice(i, 1);
       }
@@ -708,7 +759,7 @@ exports.placeOrder = async (req, res) => {
       return res.status(400).json({
         message: "Cart Is Empty",
       });
-    let randomId = utility.randomString();
+    let randomId = utility.randomString(5);
     let item_orderd = cart.items_in_cart;
 
     let order_object = {
@@ -764,8 +815,7 @@ exports.getMyOrders = async (req, res) => {
         $in: req.body.order_status,
       };
 
-    let order = await Order
-      .find(query)
+    let order = await Order.find(query)
       .sort({
         _id: -1,
       })
@@ -782,6 +832,254 @@ exports.getMyOrders = async (req, res) => {
       data: order,
     });
   } catch (e) {
+    return res.status(400).json({
+      message: e.message,
+    });
+  }
+};
+exports.ratingProduct = async (req, res) => {
+  try {
+    let item_rating_obj = req.body.item_rating_obj;
+
+    for (i = 0; i < req.body.item_rating_obj.length; i++) {
+      var ratingData_for_item = {
+        order_id: req.body.order_id,
+        item_id: item_rating_obj[i].item_id,
+        rate: item_rating_obj[i].rate,
+        review: item_rating_obj[i].review,
+        seller_id: req.body.seller_id,
+        user_id: req.userData._id,
+      };
+      console.log(ratingData_for_item);
+      await productItemRatingModel.create(ratingData_for_item);
+    }
+    return res.status(200).json({
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.getRatingProduct = async (req, res) => {
+  try {
+    let data = await productItemRatingModel.find(req.body);
+    return res.status(200).json({
+      data: data,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.addWishlist = async (req, res) => {
+  try {
+    let user_id = req.userData._id;
+    let productDetail = await Product.findOne({
+      $and: [
+        {
+          user_id: req.body.user_id,
+        },
+        {
+          item_id: req.body.item_id,
+        },
+      ],
+    }).lean(true);
+
+    if (!productDetail) throw new Error("product not found");
+
+    let isAlready = await wishlist
+      .findOne({
+        user_id: user_id,
+        $and: [
+          {
+            item_id: req.body.item_id,
+          },
+        ],
+      })
+      .lean(true);
+
+    if (isAlready) throw new Error("Already wishlist");
+
+    let product = await wishlist.create({
+      user_id: req.userData._id,
+      item_id: req.body.item_id,
+    });
+
+    let isWishlist = product ? true : false;
+
+    return res.status(200).json({
+      message: "Successfully added to wishlist.",
+      data: product,
+      isWishlist: isWishlist,
+    });
+  } catch (e) {
+    return res.status(400).json({
+      message: e.message,
+    });
+  }
+};
+
+exports.getWishlist = async (req, res) => {
+  try {
+    let user_id = req.userData._id;
+
+    let user = await wishlist
+      .find({
+        user_id: user_id,
+      })
+      .populate("item_id", "productName rate review price stock")
+      .lean(true);
+
+    if (!user) throw new Error("user not found");
+
+    res.status(200).json({
+      response: user,
+      message: " Successfully fetched wishlist",
+    });
+  } catch (error) {
+    res.status(400).error(error.message);
+  }
+};
+
+exports.removeWishlist = async (req, res) => {
+  try {
+    let userData = await wishlist
+      .findOne({
+        $and: [
+          {
+            item_id: req.body.item_id,
+          },
+          {
+            user_id: req.userData._id,
+          },
+        ],
+      })
+      .lean(true);
+
+    if (!userData) throw new Error("user not found");
+
+    let product = await wishlist.findOneAndRemove({
+      user_id: req.userData._id,
+      item_id: req.body.item_id,
+    });
+
+    return res.status(200).json({
+      data: product,
+      message: "removed from wishlist",
+    });
+  } catch (e) {
+    return res.status(400).json({
+      message: e.message,
+    });
+  }
+};
+
+exports.addBankDetails = async (req, res) => {
+  try {
+    if (
+      !req.body.acHolderName ||
+      !req.body.bankName ||
+      !req.body.accountNumber ||
+      !req.body.IFSCSWIFTCode
+    ) {
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
+    req.body.user_id = req.userData._id;
+    let user = await Bank.create(req.body);
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getBankDetails = async (req, res) => {
+  try {
+    let user = await Bank.find({
+      user_id: req.userData._id,
+    });
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateBankDetails = async (req, res) => {
+  try {
+    let user = await Bank.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteBankDetails = async (req, res) => {
+  try {
+    let user = await Bank.findByIdAndDelete(req.body._id);
+
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.addMoneyToWallet = async (req, res) => {
+  let wallet_amount = req.body.wallet_amount;
+  try {
+    let user = await User.findOne({
+      user_id: req.userData._id,
+    });
+    let expiryDate = new Date();
+    expiryDate = new Date(expiryDate.setFullYear(expiryDate.getFullYear() + 1));
+
+    await Transaction.create({
+      wallet_amount: wallet_amount,
+      transaction_validity: {
+        create: new Date(),
+        expireDate: expiryDate,
+      },
+      transaction_type: "credit",
+      status: "success",
+      user: req.userData._id,
+    });
+    await User.findOneAndUpdate(req.userData._id, {
+      wallet_amount: req.body.wallet_amount + user.wallet_amount,
+    });
+
+    res.status(200).json({
+      data: wallet_amount,
+      message: "Successfully Add Money",
+    });
+  } catch (e) {
+    console.log(e);
     return res.status(400).json({
       message: e.message,
     });

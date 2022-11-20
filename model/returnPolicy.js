@@ -1,29 +1,31 @@
-let mongoose = require('mongoose')
-let returnPolicySchema = mongoose.Schema({
-    
+let mongoose = require("mongoose");
+let returnPolicySchema = mongoose.Schema(
+  {
     policyName: {
-        type: String,
+      type: String,
     },
     amount: {
-        type: String,
+      type: String,
     },
     returnDays: {
-        type: String,
+      type: String,
     },
     description: {
-        type: String,
+      type: String,
     },
     returnAcceptBy: {
-        type: String,
-        enum:["Auto","Admin","Vender"]
+      type: String,
+      enum: ["Auto", "Admin", "Vender"],
     },
-    is_active : {
-        type: Boolean,
-        default:false
-    }
-}, {
-    timestamps: true
-})
+    is_active: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-let Return = new mongoose.model('Return', returnPolicySchema)
-module.exports = Return
+let Return = new mongoose.model("Return", returnPolicySchema);
+module.exports = Return;

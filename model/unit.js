@@ -1,18 +1,19 @@
-let mongoose = require('mongoose')
-let unitSchema = mongoose.Schema({
-
+let mongoose = require("mongoose");
+let unitSchema = mongoose.Schema(
+  {
     title: {
-        type: String,
-        required:true
+      type: String,
+      required: true,
     },
-    is_active : {
-        type: Boolean,
-        default:false
+    is_active: {
+      type: Boolean,
+      default: false,
     },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-}, {
-    timestamps: true
-})
-
-let Unit = new mongoose.model('Unit', unitSchema)
+let Unit = new mongoose.model("Unit", unitSchema);
 module.exports = Unit;

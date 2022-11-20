@@ -1,170 +1,181 @@
-let mongoose = require('mongoose')
-let productSchema = mongoose.Schema({
- 
-    productType: {   
-        type: String,
-        enum:['0','1','2']
+let mongoose = require("mongoose");
+let productSchema = mongoose.Schema(
+  {
+    productType: {
+      type: String,
+      enum: ["0", "1", "2"],
     },
-    productName: {     
-        type: String,
+    productName: {
+      type: String,
     },
     productLink: {
-        type: String,
+      type: String,
     },
     brandId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:"Brand"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Brand",
     },
     storeId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:"Store"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Store",
     },
     keyFeatures: {
-        type: String,
+      type: String,
     },
     productDescription: {
-        type: String,
+      type: String,
     },
     categoryId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:"category"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "category",
     },
     subCategoryId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:"subCategory"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "subCategory",
     },
     childCategoryId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:"childCategory"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "childCategory",
     },
     alsoIn: {
-        type: String,
+      type: String,
     },
     stock: {
-        type: String,
+      type: String,
     },
     productTags: {
-        type: String,
+      type: String,
     },
     sizeChart: {
-        type: String,
+      type: String,
+    },
+    productColor: {
+      type: String,
     },
     productTagIn: {
-        type: String,
+      type: String,
     },
     productTagTextColor: {
-        type: String,
+      type: String,
     },
     productTagBackgroundColor: {
-        type: String,
+      type: String,
     },
     productCatalogue: {
-        type: String,
+      type: String,
     },
     model: {
-        type: String,
+      type: String,
     },
     hsnSac: {
-        type: String,
+      type: String,
     },
     sku: {
-        type: String,
+      type: String,
     },
     price: {
-        type: String,
+      type: String,
     },
     offerPrice: {
-        type: String,
+      type: String,
     },
     type: {
-        type: String,
-        enum:["gaurantee","warranty"]
+      type: String,
+      enum: ["gaurantee", "warranty"],
     },
     daysMonthsYear: {
-         type: String,
-        enum:["none","day","months","year"]
+      type: String,
+      enum: ["none", "day", "months", "year"],
     },
     startSellingFrom: {
-        type: String,
+      type: String,
     },
-    weight:{
-        type:String
+    weight: {
+      type: String,
     },
     tax: {
-        type: String,
+      type: String,
     },
     taxName: {
-        type: String,
+      type: String,
     },
     taxApplied: {
-        type: String,
+      type: String,
     },
     taxClass: {
-        type: String,
-        enum:["GST","US Tax"]
+      type: String,
+      enum: ["GST", "US Tax"],
     },
     productTagTextColor: {
-        type: String,
+      type: String,
     },
     productTagBackgroundColor: {
-        type: String,
+      type: String,
     },
     productThumbnailImage: {
-        type: String,
+      type: String,
     },
     productHoverThumbnailImage: {
-        type: String,
+      type: String,
     },
     productVideoPreview: {
-        type: String,
+      type: String,
     },
     productVideoThumbnail: {
-        type: String,
+      type: String,
     },
     giftPackingCharges: {
-        type: String,
+      type: String,
     },
-    priceIncludeTax : {
-        type: Boolean,
-        default:false
+    priceIncludeTax: {
+      type: Boolean,
+      default: false,
     },
-    otherProductImages:{
-        type:String
+    otherProductImages: {
+      type: String,
     },
-    downloadableProductFile:{
-        type:String
+    downloadableProductFile: {
+      type: String,
     },
-    is_active : {
-        type: Boolean,
-        default:false
+    is_active: {
+      type: Boolean,
+      default: false,
     },
-    freeShipping : {
-        type: Boolean,
-        default:false
+    freeShipping: {
+      type: Boolean,
+      default: false,
     },
-    featured : {
-        type: Boolean,
-        default:false
+    featured: {
+      type: Boolean,
+      default: false,
     },
-    cancleAvailable : {
-        type: Boolean,
-        default:false
+    cancleAvailable: {
+      type: Boolean,
+      default: false,
     },
-    cashOnDelivery : {
-        type: Boolean,
-        default:false
+    cashOnDelivery: {
+      type: Boolean,
+      default: false,
     },
-    returnAvailable : {
-        type: String,
-        enum:["Return Available","Return Not Available"]
+    returnAvailable: {
+      type: String,
+      enum: ["Return Available", "Return Not Available"],
     },
-    selectReturnPolicy : {
-        type: String,
-        enum:["Damaged Goods","Return Policy","Defective Goods","Electronic Goods And Accessories","A Test Policy"]
+    selectReturnPolicy: {
+      type: String,
+      enum: [
+        "Damaged Goods",
+        "Return Policy",
+        "Defective Goods",
+        "Electronic Goods And Accessories",
+        "A Test Policy",
+      ],
     },
-}, {
-    timestamps: true
-})
+  },
+  {
+    timestamps: true,
+  }
+);
 
-let Product = new mongoose.model('Product', productSchema)
+let Product = new mongoose.model("Product", productSchema);
 module.exports = Product;

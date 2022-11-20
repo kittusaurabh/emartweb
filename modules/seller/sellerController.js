@@ -2,16 +2,14 @@ const Joi = require("joi");
 const md5 = require("md5");
 const jwt = require("jsonwebtoken");
 const Seller = require("../../model/sellerModel");
-const Gift = require('../../model/gift');
-const Category = require('../../model/category');
-const subCategory = require('../../model/subCategory');
-const childCategory = require('../../model/childCategory');
-const Brands = require('../../model/brandModel');
-const Product = require('../../model/Product');
-const sizeChart = require('../../model/sizeChart');
+const Gift = require("../../model/gift");
+const Category = require("../../model/category");
+const subCategory = require("../../model/subCategory");
+const childCategory = require("../../model/childCategory");
+const Brands = require("../../model/brandModel");
+const Product = require("../../model/Product");
+const sizeChart = require("../../model/sizeChart");
 const utility = require("../../common/utility");
-
-   
 
 exports.signup = async (req, res) => {
   // Validate request parameters, queries using express-validator
@@ -23,8 +21,8 @@ exports.signup = async (req, res) => {
     country,
     state,
     city,
-    profile_picture,  
-    password
+    profile_picture,
+    password,
   } = req.body;
 
   const schema = Joi.object({
@@ -51,7 +49,7 @@ exports.signup = async (req, res) => {
     return res.status(400).json({
       message: `Validation error: ${error.details[0].message}`,
     });
-     }
+  }
 
   let userData = req.body;
   userData.buisness_email = userData.buisness_email.toLowerCase();
@@ -67,7 +65,7 @@ exports.signup = async (req, res) => {
   userData.access_token = token;
   try {
     let isExists = await Seller.findOne({
-        $or: [
+      $or: [
         {
           buisness_email: userData.buisness_email,
         },
@@ -120,7 +118,7 @@ exports.login = async (req, res) => {
     let users = await Seller.findOne({
       buisness_email: userData.buisness_email,
       password: md5(req.body.password),
-     });
+    });
 
     if (!users) {
       return res.status(403).json({
@@ -162,8 +160,8 @@ exports.login = async (req, res) => {
 };
 exports.update = async (req, res) => {
   try {
-    let user = await Seller.findByIdAndUpdate(req.body._id, req.body,{
-      new:true
+    let user = await Seller.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
     });
 
     return res.status(200).json({
@@ -205,7 +203,7 @@ exports.forgetPassword = async (req, res) => {
   try {
     let user = await Seller.findByIdAndUpdate(
       {
-        _id: req.body._id
+        _id: req.body._id,
       },
       {
         password: md5(req.body.password),
@@ -285,18 +283,23 @@ exports.changePassword = async (req, res) => {
 
 exports.addGift = async (req, res) => {
   try {
-    if(!req.body.title||!req.body.giftCode||!req.body.amount||!req.body.maxUsageLimit||!req.body.expiryDate){
+    if (
+      !req.body.title ||
+      !req.body.giftCode ||
+      !req.body.amount ||
+      !req.body.maxUsageLimit ||
+      !req.body.expiryDate
+    ) {
       return res.status(400).json({
         message: "Keys is Missing",
       });
     }
-   let user = await Gift.create(req.body)
-    
+    let user = await Gift.create(req.body);
+
     return res.status(200).json({
       data: user,
       message: "Success",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -305,13 +308,12 @@ exports.addGift = async (req, res) => {
 };
 exports.getGift = async (req, res) => {
   try {
-   let user = await Gift.find(req.body)
-    
+    let user = await Gift.find(req.body);
+
     return res.status(200).json({
       data: user,
       message: "Success",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -320,14 +322,13 @@ exports.getGift = async (req, res) => {
 };
 exports.updateGift = async (req, res) => {
   try {
-    let user = await Gift.findByIdAndUpdate(req.body._id,req.body,{
-      new:true
-     })
+    let user = await Gift.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
     return res.status(200).json({
       data: user,
       message: "Updated",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -336,13 +337,12 @@ exports.updateGift = async (req, res) => {
 };
 exports.deleteGift = async (req, res) => {
   try {
-   let user = await Gift.findByIdAndDelete(req.body._id)
-    
+    let user = await Gift.findByIdAndDelete(req.body._id);
+
     return res.status(200).json({
       data: user,
       message: "Deleted",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -350,28 +350,24 @@ exports.deleteGift = async (req, res) => {
   }
 };
 
-
-
-
 exports.addCategory = async (req, res) => {
   try {
     if (req.body.sheet_url) {
-      let file_name = (req.body.sheet_url).split('/')
+      let file_name = req.body.sheet_url.split("/");
       file_name = file_name[file_name.length - 1];
-      let sheetJson = utility.exel2json(file_name)
+      let sheetJson = utility.exel2json(file_name);
       console.log(sheetJson);
       for (let i = 0; i < sheetJson.length; i++)
-        await Category.create(sheetJson[i])
+        await Category.create(sheetJson[i]);
       return res.status(200).json({
         message: "Successful import Category",
       });
     }
-   let user = await Category.create(req.body)
+    let user = await Category.create(req.body);
     return res.status(200).json({
       data: user,
       message: "Success",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -380,13 +376,12 @@ exports.addCategory = async (req, res) => {
 };
 exports.getCategory = async (req, res) => {
   try {
-   let user = await Category.find(req.body)
-    
+    let user = await Category.find(req.body);
+
     return res.status(200).json({
       data: user,
       message: "Success",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -397,15 +392,14 @@ exports.updateCategory = async (req, res) => {
   try {
     console.log(req.file);
     console.log(req.body);
-   let user = await Category.findByIdAndUpdate(req.body._id,req.body,{
-    new:true
-   })
-    
+    let user = await Category.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+
     return res.status(200).json({
       data: user,
       message: "Updated",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -414,13 +408,12 @@ exports.updateCategory = async (req, res) => {
 };
 exports.deleteCategory = async (req, res) => {
   try {
-   let user = await Category.findByIdAndDelete(req.body._id)
-    
+    let user = await Category.findByIdAndDelete(req.body._id);
+
     return res.status(200).json({
       data: user,
       message: "Deleted",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -431,28 +424,31 @@ exports.deleteCategory = async (req, res) => {
 exports.addSubCategory = async (req, res) => {
   try {
     if (req.body.sheet_url) {
-      let file_name = (req.body.sheet_url).split('/')
+      let file_name = req.body.sheet_url.split("/");
       file_name = file_name[file_name.length - 1];
-      let sheetJson = utility.exel2json(file_name)
+      let sheetJson = utility.exel2json(file_name);
       console.log(sheetJson);
       for (let i = 0; i < sheetJson.length; i++)
-        await subCategory.create(sheetJson[i])
+        await subCategory.create(sheetJson[i]);
       return res.status(200).json({
         message: "Successful import Subcategory",
       });
     }
-    if(!req.body.categoryId||!req.body.subCategory||!req.body.description){
+    if (
+      !req.body.categoryId ||
+      !req.body.subCategory ||
+      !req.body.description
+    ) {
       return res.status(400).json({
         message: "Keys is Missing",
       });
     }
-   let user = await subCategory.create(req.body)
-    
+    let user = await subCategory.create(req.body);
+
     return res.status(200).json({
       data: user,
       message: "Success",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -461,13 +457,12 @@ exports.addSubCategory = async (req, res) => {
 };
 exports.getSubCategory = async (req, res) => {
   try {
-   let user = await subCategory.find(req.body)
-    
+    let user = await subCategory.find(req.body);
+
     return res.status(200).json({
       data: user,
       message: "Success",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -476,15 +471,14 @@ exports.getSubCategory = async (req, res) => {
 };
 exports.updateSubCategory = async (req, res) => {
   try {
-   let user = await subCategory.findByIdAndUpdate(req.body._id,req.body,{
-    new:true
-   })
-    
+    let user = await subCategory.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+
     return res.status(200).json({
       data: user,
       message: "Updated",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -493,13 +487,12 @@ exports.updateSubCategory = async (req, res) => {
 };
 exports.deleteSubCategory = async (req, res) => {
   try {
-   let user = await subCategory.findByIdAndDelete(req.body._id)
-    
+    let user = await subCategory.findByIdAndDelete(req.body._id);
+
     return res.status(200).json({
       data: user,
       message: "Deleted",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -510,28 +503,32 @@ exports.deleteSubCategory = async (req, res) => {
 exports.addChildCategory = async (req, res) => {
   try {
     if (req.body.sheet_url) {
-      let file_name = (req.body.sheet_url).split('/')
+      let file_name = req.body.sheet_url.split("/");
       file_name = file_name[file_name.length - 1];
-      let sheetJson = utility.exel2json(file_name)
+      let sheetJson = utility.exel2json(file_name);
       console.log(sheetJson);
       for (let i = 0; i < sheetJson.length; i++)
-        await childCategory.create(sheetJson[i])
+        await childCategory.create(sheetJson[i]);
       return res.status(200).json({
         message: "Successful import Child Category",
       });
     }
-    if(!req.body.categoryId||!req.body.subCategoryId||!req.body.childCategory||!req.body.description){
+    if (
+      !req.body.categoryId ||
+      !req.body.subCategoryId ||
+      !req.body.childCategory ||
+      !req.body.description
+    ) {
       return res.status(400).json({
         message: "Keys is Missing",
       });
     }
-   let user = await childCategory.create(req.body)
-    
+    let user = await childCategory.create(req.body);
+
     return res.status(200).json({
       data: user,
       message: "Success",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -540,13 +537,12 @@ exports.addChildCategory = async (req, res) => {
 };
 exports.getChildCategory = async (req, res) => {
   try {
-   let user = await childCategory.find(req.body)
-    
+    let user = await childCategory.find(req.body);
+
     return res.status(200).json({
       data: user,
       message: "Success",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -555,15 +551,14 @@ exports.getChildCategory = async (req, res) => {
 };
 exports.updateChildCategory = async (req, res) => {
   try {
-   let user = await childCategory.findByIdAndUpdate(req.body._id,req.body,{
-    new:true
-   })
-    
+    let user = await childCategory.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+
     return res.status(200).json({
       data: user,
       message: "Updated",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -572,13 +567,12 @@ exports.updateChildCategory = async (req, res) => {
 };
 exports.deleteChildCategory = async (req, res) => {
   try {
-   let user = await childCategory.findByIdAndDelete(req.body._id)
-    
+    let user = await childCategory.findByIdAndDelete(req.body._id);
+
     return res.status(200).json({
       data: user,
       message: "Deleted",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -589,28 +583,27 @@ exports.deleteChildCategory = async (req, res) => {
 exports.addBrand = async (req, res) => {
   try {
     if (req.body.sheet_url) {
-      let file_name = (req.body.sheet_url).split('/')
+      let file_name = req.body.sheet_url.split("/");
       file_name = file_name[file_name.length - 1];
-      let sheetJson = utility.exel2json(file_name)
+      let sheetJson = utility.exel2json(file_name);
       console.log(sheetJson);
       for (let i = 0; i < sheetJson.length; i++)
-        await Brands.create(sheetJson[i])
+        await Brands.create(sheetJson[i]);
       return res.status(200).json({
         message: "Successful import Brands",
       });
     }
-    if(!req.body.brandName||!req.body.CategoryId||!req.body.brandLogo){
+    if (!req.body.brandName || !req.body.CategoryId || !req.body.brandLogo) {
       return res.status(400).json({
         message: "Keys is Missing",
       });
     }
-   let user = await Brands.create(req.body)
-    
+    let user = await Brands.create(req.body);
+
     return res.status(200).json({
       data: user,
       message: "Success",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -619,13 +612,12 @@ exports.addBrand = async (req, res) => {
 };
 exports.getBrand = async (req, res) => {
   try {
-   let user = await Brands.find(req.body)
-    
+    let user = await Brands.find(req.body);
+
     return res.status(200).json({
       data: user,
       message: "Success",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -634,15 +626,14 @@ exports.getBrand = async (req, res) => {
 };
 exports.updateBrand = async (req, res) => {
   try {
-   let user = await Brands.findByIdAndUpdate(req.body._id,req.body,{
-    new:true
-   })
-    
+    let user = await Brands.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+
     return res.status(200).json({
       data: user,
       message: "Updated",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -651,13 +642,12 @@ exports.updateBrand = async (req, res) => {
 };
 exports.deleteBrand = async (req, res) => {
   try {
-   let user = await Brands.findByIdAndDelete(req.body._id)
-    
+    let user = await Brands.findByIdAndDelete(req.body._id);
+
     return res.status(200).json({
       data: user,
       message: "Deleted",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -668,23 +658,22 @@ exports.deleteBrand = async (req, res) => {
 exports.addProduct = async (req, res) => {
   try {
     if (req.body.sheet_url) {
-      let file_name = (req.body.sheet_url).split('/')
+      let file_name = req.body.sheet_url.split("/");
       file_name = file_name[file_name.length - 1];
-      let sheetJson = utility.exel2json(file_name)
+      let sheetJson = utility.exel2json(file_name);
       console.log(sheetJson);
       for (let i = 0; i < sheetJson.length; i++)
-        await Product.create(sheetJson[i])
+        await Product.create(sheetJson[i]);
       return res.status(200).json({
         message: "Successful import productes",
       });
     }
-    let user = await Product.create(req.body)
- 
+    let user = await Product.create(req.body);
+
     return res.status(200).json({
       data: user,
       message: "Success",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -693,13 +682,12 @@ exports.addProduct = async (req, res) => {
 };
 exports.getProduct = async (req, res) => {
   try {
-   let user = await Product.find(req.body)
-    
+    let user = await Product.find(req.body);
+
     return res.status(200).json({
       data: user,
       message: "Success",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -708,15 +696,14 @@ exports.getProduct = async (req, res) => {
 };
 exports.updateProduct = async (req, res) => {
   try {
-   let user = await Product.findByIdAndUpdate(req.body._id,req.body,{
-    new:true
-   })
-    
+    let user = await Product.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+
     return res.status(200).json({
       data: user,
       message: "Updated",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -725,13 +712,12 @@ exports.updateProduct = async (req, res) => {
 };
 exports.deleteProduct = async (req, res) => {
   try {
-   let user = await Product.findByIdAndDelete(req.body._id)
-    
+    let user = await Product.findByIdAndDelete(req.body._id);
+
     return res.status(200).json({
       data: user,
       message: "Deleted",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -741,33 +727,35 @@ exports.deleteProduct = async (req, res) => {
 
 exports.addSizeChart = async (req, res) => {
   try {
-     if(!req.body.tamplateName||!req.body.tamplateCode||!req.body.tamplateOption ){
+    if (
+      !req.body.tamplateName ||
+      !req.body.tamplateCode ||
+      !req.body.tamplateOption
+    ) {
       return res.status(400).json({
         message: "Keys is Missing",
       });
     }
-   let user = await sizeChart.create(req.body)
-    
-      return res.status(200).json({
-      data: user,
-      message: "Success",
-    });
+    let user = await sizeChart.create(req.body);
 
-  } catch (error) {
-    return res.status(400).json({
-      message: error.message,
-    });
-   }
-};
-exports.getSizeChart = async (req, res) => {
-  try {
-      let user = await sizeChart.find(req.body) 
-    
     return res.status(200).json({
       data: user,
       message: "Success",
     });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getSizeChart = async (req, res) => {
+  try {
+    let user = await sizeChart.find(req.body);
 
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -776,15 +764,14 @@ exports.getSizeChart = async (req, res) => {
 };
 exports.updateSizeChart = async (req, res) => {
   try {
-   let user = await sizeChart.findByIdAndUpdate(req.body._id,req.body,{
-    new:true
-   })
-    
+    let user = await sizeChart.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+
     return res.status(200).json({
       data: user,
       message: "Updated",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -793,13 +780,12 @@ exports.updateSizeChart = async (req, res) => {
 };
 exports.deleteSizeChart = async (req, res) => {
   try {
-   let user = await sizeChart.findByIdAndDelete(req.body._id)
-    
+    let user = await sizeChart.findByIdAndDelete(req.body._id);
+
     return res.status(200).json({
       data: user,
       message: "Deleted",
     });
-
   } catch (error) {
     return res.status(400).json({
       message: error.message,
