@@ -68,15 +68,14 @@ exports.upload_sheet = function (req, res) {
   });
 };
 
-const SENDGRID_API_KEY =
-  "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";
+const SENDGRID_API_KEY = " ";
 
 exports.sendEmail = async (req, res) => {
   try {
     sgMail.setApiKey(SENDGRID_API_KEY);
     const msg = {
       to: req.body.to,
-      from: "Eazaan2022@gmail.com",
+      from: "email",
       subject: req.body.subject,
       text: req.body.message,
       html: req.body.message,
