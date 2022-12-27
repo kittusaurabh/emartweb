@@ -13,6 +13,10 @@ const productItemRatingModel = require("../../model/productRatingItem");
 const wishlist = require("../../model/wishlist");
 const Transaction = require("../../model/transection");
 const Bank = require("../../model/bankModel");
+const Compare = require("../../model/compareModel");
+const Faq = require("../../model/faq");
+const ContactUs = require("../../model/contectUsModel");
+const Ticket = require("../../model/ticketModel");
 
 exports.signup = async (req, res) => {
   // Validate request parameters, queries using express-validator
@@ -208,6 +212,14 @@ exports.forgetpassword = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         message: "invalid details",
+      });
+    }
+    if (user.player_id) {
+      let playerIds = [user.player_id];
+      await utility.sendNotification({
+        name: user.name,
+        playerIds: playerIds,
+        contents: "Password reset link has been send to your mail",
       });
     }
     return res.status(200).json({
@@ -865,7 +877,10 @@ exports.ratingProduct = async (req, res) => {
 
 exports.getRatingProduct = async (req, res) => {
   try {
-    let data = await productItemRatingModel.find(req.body);
+    let filter = {
+      item_id: req.query.item_id,
+    };
+    let data = await productItemRatingModel.find(filter);
     return res.status(200).json({
       data: data,
       message: "Success",
@@ -1082,6 +1097,161 @@ exports.addMoneyToWallet = async (req, res) => {
     console.log(e);
     return res.status(400).json({
       message: e.message,
+    });
+  }
+};
+
+exports.getWalletAmount = async (req, res) => {
+  try {
+    let user = await User.findOne();
+    return res.status(200).json({
+      message: "Successfully Fetched.",
+      data: user,
+    });
+  } catch (e) {
+    return res.status(400).json({
+      message: e.message,
+    });
+  }
+};
+
+exports.addToCompare = async (req, res) => {
+  try {
+    let user_id = req.userData._id;
+    let productDetail = await Product.findOne({
+      $and: [
+        {
+          user_id: req.body.user_id,
+        },
+        {
+          item_id: req.body.item_id,
+        },
+      ],
+    }).lean(true);
+
+    if (!productDetail) throw new Error("product not found");
+
+    let isAlready = await Compare.findOne({
+      user_id: user_id,
+      item_id: req.body.item_id,
+    }).lean(true);
+    if (isAlready) throw new Error("Already in list");
+
+    let itemCount = await Compare.find({
+      user_id: user_id,
+    });
+    if (itemCount.length >= 4) {
+      return res.status(400).json({
+        message: "Clear The Compare List.",
+      });
+    }
+    let product = await Compare.create({
+      user_id: req.userData._id,
+      item_id: req.body.item_id,
+    });
+    return res.status(200).json({
+      message: "Successfully added to Compare.",
+      data: product,
+    });
+  } catch (e) {
+    return res.status(400).json({
+      message: e.message,
+    });
+  }
+};
+
+exports.getCompareList = async (req, res) => {
+  try {
+    let user = req.userData._id;
+    let data = await Compare.find({ user_id: user }).populate("item_id");
+    return res.status(200).json({
+      data: data,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.removeFromCompareList = async (req, res) => {
+  try {
+    let data = await Compare.findByIdAndDelete(req.body._id);
+    return res.status(200).json({
+      data: data,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.getFaq = async (req, res) => {
+  try {
+    let query = {};
+
+    if (req.query.que) {
+      query.que = new RegExp(req.query.que, "i");
+    }
+    let data = await Faq.find(query);
+
+    return res.status(200).json({
+      data: data,
+      message: "success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.contactUs = async (req, res) => {
+  try {
+    if (
+      !req.body.yourName ||
+      !req.body.email ||
+      !req.body.subject ||
+      !req.body.message
+    ) {
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
+    req.body.user_id = req.userData._id;
+    let user = await ContactUs.create(req.body);
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.createTicket = async (req, res) => {
+  try {
+    if (!req.body.issue || !req.body.describeYourIssue) {
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
+    req.body.user_id = req.userData._id;
+    let user = await Ticket.create(req.body);
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
     });
   }
 };

@@ -1,5 +1,5 @@
 let mongoose = require("mongoose");
-let bankModelSchema = mongoose.Schema(
+let ticketModelSchema = mongoose.Schema(
   {
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -9,21 +9,19 @@ let bankModelSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Seller",
     },
-    isCreatedByAdmin: {
-      type: Boolean,
-      default: false,
-    },
-    acHolderName: {
+    issue: {
       type: String,
     },
-    bankName: {
+    image: {
       type: String,
     },
-    accountNumber: {
+    describeYourIssue: {
       type: String,
     },
-    IFSCSWIFTCode: {
+    status: {
       type: String,
+      enum: ["open", "closed", "pending", "solved"],
+      default: "open",
     },
   },
   {
@@ -31,5 +29,5 @@ let bankModelSchema = mongoose.Schema(
   }
 );
 
-let Bank = new mongoose.model("Bank", bankModelSchema);
-module.exports = Bank;
+let Ticket = new mongoose.model("Ticket", ticketModelSchema);
+module.exports = Ticket;

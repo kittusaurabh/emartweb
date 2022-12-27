@@ -50,7 +50,11 @@ let userSchema = mongoose.Schema(
       default: false,
     },
     refer_id: String,
+    player_id: {
+      type: String,
+    },
   },
+
   {
     timestamps: true,
   }

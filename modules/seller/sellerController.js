@@ -10,6 +10,8 @@ const Brands = require("../../model/brandModel");
 const Product = require("../../model/Product");
 const sizeChart = require("../../model/sizeChart");
 const utility = require("../../common/utility");
+const Bank = require("../../model/bankModel");
+const Ticket = require("../../model/ticketModel");
 
 exports.signup = async (req, res) => {
   // Validate request parameters, queries using express-validator
@@ -785,6 +787,101 @@ exports.deleteSizeChart = async (req, res) => {
     return res.status(200).json({
       data: user,
       message: "Deleted",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.addBankDetails = async (req, res) => {
+  try {
+    if (
+      !req.body.acHolderName ||
+      !req.body.bankName ||
+      !req.body.accountNumber ||
+      !req.body.IFSCSWIFTCode
+    ) {
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
+    req.body.seller_id = req.userData._id;
+    let user = await Bank.create(req.body);
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.getBankDetails = async (req, res) => {
+  try {
+    let user = await Bank.find({
+      seller_id: req.userData._id,
+    });
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.updateBankDetails = async (req, res) => {
+  try {
+    let user = await Bank.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.deleteBankDetails = async (req, res) => {
+  try {
+    let user = await Bank.findByIdAndDelete(req.body._id);
+
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.createTicket = async (req, res) => {
+  try {
+    if (!req.body.issue || !req.body.describeYourIssue) {
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
+    req.body.seller_id = req.userData._id;
+    let user = await Ticket.create(req.body);
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
     });
   } catch (error) {
     return res.status(400).json({

@@ -18,6 +18,8 @@ const sizeChart = require("../../model/sizeChart");
 const Menu = require("../../model/menu");
 const footerMenu = require("../../model/footerMenu");
 const utility = require("../../common/utility");
+const Faq = require("../../model/faq");
+const Bank = require("../../model/bankModel");
 
 exports.login = async function (req, res, next) {
   let { email, password } = req.body;
@@ -175,7 +177,18 @@ exports.isBlocked_user = async (req, res) => {
 };
 exports.getuser = async (req, res) => {
   try {
-    let user = await User.find(req.body);
+    let filter = {};
+    if (req.query.dateObj) {
+      filter.createdAt = {
+        gte: new Date(
+          new Date(req.query.dateObj.startDate).setHours(0, 0, 0, 0)
+        ),
+        lte: new Date(
+          new Date(req.query.dateObj.endDate).setHours(24, 0, 0, 0)
+        ),
+      };
+    }
+    let user = await User.find(filter);
 
     return res.status(200).json({
       data: user,
@@ -1186,6 +1199,135 @@ exports.updateFooterMenu = async (req, res) => {
 exports.deleteFooterMenu = async (req, res) => {
   try {
     let user = await footerMenu.findByIdAndDelete(req.body._id);
+
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.addFaq = async (req, res) => {
+  try {
+    let user = await Faq.create(req.body);
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getFaq = async (req, res) => {
+  try {
+    let user = await Faq.find(req.body);
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateFaq = async (req, res) => {
+  try {
+    let user = await Faq.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteFaq = async (req, res) => {
+  try {
+    let user = await Faq.findByIdAndDelete(req.body._id);
+
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.addBankDetails = async (req, res) => {
+  try {
+    if (
+      !req.body.acHolderName ||
+      !req.body.bankName ||
+      !req.body.accountNumber ||
+      !req.body.IFSCSWIFTCode
+    ) {
+      return res.status(400).json({
+        message: "Keys is Missing",
+      });
+    }
+    req.body.isCreatedByAdmin = true;
+    let user = await Bank.create(req.body);
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getBankDetails = async (req, res) => {
+  try {
+    let user = await Bank.find({
+      isCreatedByAdmin: true,
+    });
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateBankDetails = async (req, res) => {
+  try {
+    let user = await Bank.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteBankDetails = async (req, res) => {
+  try {
+    let user = await Bank.findByIdAndDelete(req.body._id);
 
     return res.status(200).json({
       data: user,

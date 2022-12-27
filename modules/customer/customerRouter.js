@@ -110,6 +110,12 @@ router.post(
   customerController.addMoneyToWallet
 );
 
+router.get(
+  "/getWalletAmount",
+  auth.userVerifyToken,
+  customerController.getWalletAmount
+);
+
 router.post(
   "/addBankDetails",
   auth.userVerifyToken,
@@ -132,6 +138,32 @@ router.post(
   "/deleteBankDetails",
   auth.userVerifyToken,
   customerController.deleteBankDetails
+);
+
+router.post(
+  "/addToCompare",
+  auth.userVerifyToken,
+  customerController.addToCompare
+);
+
+router.get(
+  "/getCompare",
+  auth.userVerifyToken,
+  customerController.getCompareList
+);
+
+router.post(
+  "/removeFromCompareList",
+  auth.userVerifyToken,
+  customerController.removeFromCompareList
+);
+
+router.get("/getFaq", auth.userVerifyToken, customerController.getFaq);
+router.post("/contactUs", auth.userVerifyToken, customerController.contactUs);
+router.post(
+  "/createTicket",
+  auth.userVerifyToken,
+  customerController.createTicket
 );
 
 exports.Router = router;

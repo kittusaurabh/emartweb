@@ -81,4 +81,14 @@ router.get("/getFooterMenu", adminController.getFooterMenu);
 router.post("/updateFooterMenu", adminController.updateFooterMenu);
 router.post("/deleteFooterMenu", adminController.deleteFooterMenu);
 
+router.post("/addFaq", adminController.addFaq);
+router.get("/getFaq", adminController.getFaq);
+router.post("/updateFaq", adminController.updateFaq);
+router.post("/deleteFaq", adminController.deleteFaq);
+
+router.post("/addBankDetails", adminController.addBankDetails);
+router.get("/getBankDetails", adminController.getBankDetails);
+router.post("/updateBankDetails", adminController.updateBankDetails);
+router.post("/deleteBankDetails", adminController.deleteBankDetails);
+
 exports.Router = router;

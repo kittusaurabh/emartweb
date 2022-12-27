@@ -1,4 +1,7 @@
 const xlsx = require("xlsx");
+var axios = require("axios");
+const ONESIGNAL_APP_ID = "cf9830e1-cb41-4f04-b3fc-a69615de339b";
+let key = "ZDZiMzRlZDctODNhZC00NTAyLTk0NGUtNDE0MTA3ZjAyYTcw";
 
 exports.exel2json = (sheet) => {
   const file = xlsx.readFile("public/sheet/" + sheet);
@@ -34,4 +37,31 @@ exports.distance_of_two_cordinates = function (lat1, lon1, lat2, lon2) {
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   var d = R * c;
   return d;
+};
+
+exports.sendNotification = async (payload) => {
+  var config = {
+    method: "post",
+    url: "https://onesignal.com/api/v1/notifications",
+    headers: {
+      Authorization: "Basic " + key,
+      "Content-Type": "application/json",
+    },
+    data: JSON.stringify({
+      include_player_ids: payload.playerIds,
+      contents: {
+        en: payload.contents,
+        es: payload.contents,
+      },
+      name: payload.name,
+      app_id: ONESIGNAL_APP_ID,
+    }),
+  };
+
+  let resp = await axios(config);
+  if (resp.data) {
+    return true;
+  } else {
+    return false;
+  }
 };
