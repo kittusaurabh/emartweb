@@ -20,6 +20,11 @@ const footerMenu = require("../../model/footerMenu");
 const utility = require("../../common/utility");
 const Faq = require("../../model/faq");
 const Bank = require("../../model/bankModel");
+const Order = require("../../model/orderModel");
+const Testimonial = require("../../model/testimonialModel");
+const Credential = require("../../model/CredentialsModel");
+const HotDeals = require("../../model/hotDealsModel");
+const Advertisement = require("../../model/advertisementsModel");
 
 exports.login = async function (req, res, next) {
   let { email, password } = req.body;
@@ -1328,6 +1333,297 @@ exports.updateBankDetails = async (req, res) => {
 exports.deleteBankDetails = async (req, res) => {
   try {
     let user = await Bank.findByIdAndDelete(req.body._id);
+
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.dashboard = async (req, res) => {
+  try {
+    let data = {};
+    data.totalUser = await User.count();
+    data.totalOrder = await Order.count();
+    data.totalCancleOrder = await Order.count({
+      order_status: "CANCELLEDBYUSER",
+    });
+
+    data.totalProducts = await Product.count();
+    data.totalStore = await Store.count();
+    data.totalCategories = await Category.count();
+    data.totalCoupon = await Coupon.count();
+    data.totalFaqs = await Faq.count();
+    data.totalSaller = await Seller.count();
+    data.totalTestimonial = await Testimonial.count();
+    data.totalSpecialOffers = await specialOffer.count();
+    return res.status(200).json({
+      data: data,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.getUser = async (req, res) => {
+  try {
+    let user = await User.find();
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.getOrder = async (req, res) => {
+  try {
+    let user = await Order.find();
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.getCancleOrder = async (req, res) => {
+  try {
+    let user = await Order.find({
+      order_status: "CANCELLEDBYUSER",
+    });
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.addTestimonial = async (req, res) => {
+  try {
+    if (req.body.rating > 5) {
+      return res.status(400).json({
+        message: "Rating must be less then 5",
+      });
+    }
+    let user = await Testimonial.create(req.body);
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getTestimonial = async (req, res) => {
+  try {
+    let user = await Testimonial.find();
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateTestimonial = async (req, res) => {
+  try {
+    let user = await Testimonial.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteTestimonial = async (req, res) => {
+  try {
+    let user = await Testimonial.findByIdAndDelete(req.body._id);
+
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.addOneSignal = async (req, res) => {
+  try {
+    let data = {};
+    data.credential = {
+      appId: req.body.appId,
+      restApiKey: req.body.restApiKey,
+    };
+
+    data.credentialType = "onesignal";
+    let user = await Credential.findOne({ credentialType: "onesignal" });
+    if (user) {
+      user = await Credential.findByIdAndUpdate(user._id, data);
+    } else {
+      user = await Credential.create(data);
+    }
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.getOneSignal = async (req, res) => {
+  try {
+    let user = await Credential.find();
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.addHotDeals = async (req, res) => {
+  try {
+    let user = await HotDeals.create(req.body);
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getHotDeals = async (req, res) => {
+  try {
+    let user = await HotDeals.find();
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateHotDeals = async (req, res) => {
+  try {
+    let user = await HotDeals.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteHotDeals = async (req, res) => {
+  try {
+    let user = await HotDeals.findByIdAndDelete(req.body._id);
+
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.addAdvertisement = async (req, res) => {
+  try {
+    let user = await Advertisement.create(req.body);
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getAdvertisement = async (req, res) => {
+  try {
+    let user = await Advertisement.find();
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateAdvertisement = async (req, res) => {
+  try {
+    let user = await Advertisement.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteAdvertisement = async (req, res) => {
+  try {
+    let user = await Advertisement.findByIdAndDelete(req.body._id);
 
     return res.status(200).json({
       data: user,

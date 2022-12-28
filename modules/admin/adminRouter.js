@@ -91,4 +91,27 @@ router.get("/getBankDetails", adminController.getBankDetails);
 router.post("/updateBankDetails", adminController.updateBankDetails);
 router.post("/deleteBankDetails", adminController.deleteBankDetails);
 
+router.post("/dashboard", adminController.dashboard);
+router.get("/getUser", adminController.getUser);
+router.get("/getOrder", adminController.getOrder);
+router.get("/getCancleOrder", adminController.getCancleOrder);
+
+router.post("/addTestimonial", adminController.addTestimonial);
+router.get("/getTestimonial", adminController.getTestimonial);
+router.post("/updateTestimonial", adminController.updateTestimonial);
+router.post("/deleteTestimonial", adminController.deleteTestimonial);
+
+router.post("/addOneSignal", adminController.addOneSignal);
+router.get("/getOneSignal", adminController.getOneSignal);
+
+router.post("/addHotDeals", adminController.addHotDeals);
+router.get("/getHotDeals", adminController.getHotDeals);
+router.post("/updateHotDeals", adminController.updateHotDeals);
+router.post("/deleteHotDeals", adminController.deleteHotDeals);
+
+router.post("/addAdvertisement", adminController.addAdvertisement);
+router.get("/getAdvertisement", adminController.getAdvertisement);
+router.post("/updateAdvertisement", adminController.updateAdvertisement);
+router.post("/deleteAdvertisement", adminController.deleteAdvertisement);
+
 exports.Router = router;
