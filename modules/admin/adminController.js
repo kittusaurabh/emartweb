@@ -25,6 +25,8 @@ const Testimonial = require("../../model/testimonialModel");
 const Credential = require("../../model/CredentialsModel");
 const HotDeals = require("../../model/hotDealsModel");
 const Advertisement = require("../../model/advertisementsModel");
+const FlashSale = require("../../model/flashSaleModel");
+const admin = require("../../model/adminModel");
 
 exports.login = async function (req, res, next) {
   let { email, password } = req.body;
@@ -1632,6 +1634,139 @@ exports.deleteAdvertisement = async (req, res) => {
   } catch (error) {
     return res.status(400).json({
       message: error.message,
+    });
+  }
+};
+
+exports.addFlashSale = async (req, res) => {
+  try {
+    let user = await FlashSale.create(req.body);
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.getFlashSale = async (req, res) => {
+  try {
+    let user = await FlashSale.find();
+
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.updateFlashSale = async (req, res) => {
+  try {
+    let user = await FlashSale.findByIdAndUpdate(req.body._id, req.body, {
+      new: true,
+    });
+    return res.status(200).json({
+      data: user,
+      message: "Updated",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+exports.deleteFlashSale = async (req, res) => {
+  try {
+    let user = await FlashSale.findByIdAndDelete(req.body._id);
+
+    return res.status(200).json({
+      data: user,
+      message: "Deleted",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.createUser = async (req, res) => {
+  // Validate request parameters, queries using express-validator
+
+  const schema = Joi.object({
+    user_name: Joi.string().required(),
+    user_email: Joi.string().email().required(),
+    buisness_email: Joi.string().email().required(),
+    password: Joi.string().min(8).required(),
+    city: Joi.string().required(),
+    userRole: Joi.string().required(),
+    state: Joi.string().required(),
+    country: Joi.string().required(),
+    phone_number: Joi.string().optional().allow(""),
+    mobile_number: Joi.string().optional().allow(""),
+  });
+
+  const options = {
+    abortEarly: false, // include all errors
+    allowUnknown: true, // ignore unknown props
+    stripUnknown: true, // remove unknown props
+  };
+
+  // validate request body against schema
+  const { error, value } = schema.validate(req.body, options);
+
+  if (error) {
+    return res.status(400).json({
+      message: `Validation error: ${error.details[0].message}`,
+    });
+  }
+  try {
+    let userData = req.body;
+    userData.user_email = userData.user_email;
+    userData.password = md5(userData.password);
+    let dynamicFilter = {
+      $or: [
+        {
+          user_email: userData.user_email,
+          buisness_email: userData.user_email,
+          userRole: userData.userRole,
+        },
+        {
+          mobile_number: userData.mobile_number,
+        },
+      ],
+    };
+
+    let isExists =
+      userData.role == "user"
+        ? User.findOne(dynamicFilter)
+        : userData.role == "seller"
+        ? Seller.findOne(dynamicFilter)
+        : null;
+    if (isExists) {
+      return res.status(400).json({
+        message: "Email Or Phone Number Already Exists",
+      });
+    }
+    let users =
+      userData.role == "user"
+        ? User.create(userData)
+        : userData.role == "seller"
+        ? Seller.create(userData)
+        : null;
+    return res.status(200).json({
+      data: users,
+      message: "Successfully User Created",
+    });
+  } catch (e) {
+    return res.status(400).json({
+      message: e.message,
     });
   }
 };

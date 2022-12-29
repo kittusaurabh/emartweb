@@ -11,6 +11,10 @@ let userSchema = mongoose.Schema(
     user_email: {
       type: String,
     },
+    userRole: {
+      type: String,
+      enum: ["SuperAdmin", "Customer", "Seller", "Blocked", "Support"],
+    },
     mobile_number: {
       type: String,
     },
@@ -33,6 +37,9 @@ let userSchema = mongoose.Schema(
       default: "",
     },
     country: {
+      type: String,
+    },
+    website: {
       type: String,
     },
     state: {

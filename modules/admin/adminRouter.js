@@ -91,7 +91,7 @@ router.get("/getBankDetails", adminController.getBankDetails);
 router.post("/updateBankDetails", adminController.updateBankDetails);
 router.post("/deleteBankDetails", adminController.deleteBankDetails);
 
-router.post("/dashboard", adminController.dashboard);
+router.get("/dashboard", adminController.dashboard);
 router.get("/getUser", adminController.getUser);
 router.get("/getOrder", adminController.getOrder);
 router.get("/getCancleOrder", adminController.getCancleOrder);
@@ -114,4 +114,13 @@ router.get("/getAdvertisement", adminController.getAdvertisement);
 router.post("/updateAdvertisement", adminController.updateAdvertisement);
 router.post("/deleteAdvertisement", adminController.deleteAdvertisement);
 
+router.post("/addFlashSale", adminController.addFlashSale);
+router.get("/getFlashSale", adminController.getFlashSale);
+router.post("/updateFlashSale", adminController.updateFlashSale);
+router.post("/deleteFlashSale", adminController.deleteFlashSale);
+
+// router.post("/addFlashSale", adminController.addFlashSale);
+// router.get("/getFlashSale", adminController.getFlashSale);
+// router.post("/updateFlashSale", adminController.updateFlashSale);
+// router.post("/deleteFlashSale", adminController.deleteFlashSale);
 exports.Router = router;

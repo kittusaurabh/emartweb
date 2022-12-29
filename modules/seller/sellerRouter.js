@@ -160,4 +160,7 @@ router.post(
   sellerController.createTicket
 );
 
+router.get("/dashboard", auth.sellerVerifyToken, sellerController.dashboard);
+router.get("/getOrder", auth.sellerVerifyToken, sellerController.getOrder);
+
 exports.Router = router;

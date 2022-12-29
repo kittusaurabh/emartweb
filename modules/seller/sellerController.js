@@ -12,6 +12,7 @@ const sizeChart = require("../../model/sizeChart");
 const utility = require("../../common/utility");
 const Bank = require("../../model/bankModel");
 const Ticket = require("../../model/ticketModel");
+const Order = require("../../model/orderModel");
 
 exports.signup = async (req, res) => {
   // Validate request parameters, queries using express-validator
@@ -879,6 +880,44 @@ exports.createTicket = async (req, res) => {
     req.body.seller_id = req.userData._id;
     let user = await Ticket.create(req.body);
 
+    return res.status(200).json({
+      data: user,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.dashboard = async (req, res) => {
+  try {
+    let data = {};
+    data.totalOrder = await Order.count();
+    data.totalProduct = await Product.count();
+    data.totalCancleOrder = await Order.count({
+      order_status: "CANCELLEDBYUSER",
+    });
+    let orders = await Order.find({ seller: req.userData._id });
+    data.totalEarning = 0;
+    orders.map((e) => {
+      data.totalEarning = data.totalEarning + e.order_amount;
+    });
+    return res.status(200).json({
+      data: data,
+      message: "Success",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.getOrder = async (req, res) => {
+  try {
+    let user = await Order.find();
     return res.status(200).json({
       data: user,
       message: "Success",

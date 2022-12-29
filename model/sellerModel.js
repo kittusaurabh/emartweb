@@ -37,6 +37,13 @@ let sellerSchema = mongoose.Schema(
     city: {
       type: String,
     },
+    userRole: {
+      type: String,
+      enum: ["SuperAdmin", "Customer", "Seller", "Blocked", "Support"],
+    },
+    website: {
+      type: String,
+    },
     profile_picture: {
       type: String,
     },
