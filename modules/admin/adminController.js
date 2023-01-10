@@ -26,7 +26,6 @@ const Credential = require("../../model/CredentialsModel");
 const HotDeals = require("../../model/hotDealsModel");
 const Advertisement = require("../../model/advertisementsModel");
 const FlashSale = require("../../model/flashSaleModel");
-const admin = require("../../model/adminModel");
 
 exports.login = async function (req, res, next) {
   let { email, password } = req.body;
@@ -1696,18 +1695,18 @@ exports.deleteFlashSale = async (req, res) => {
   }
 };
 
-exports.createUser = async (req, res) => {
+exports.createUserWithRole = async (req, res) => {
   // Validate request parameters, queries using express-validator
 
   const schema = Joi.object({
     user_name: Joi.string().required(),
-    user_email: Joi.string().email().required(),
-    buisness_email: Joi.string().email().required(),
+    user_email: Joi.string().email(),
     password: Joi.string().min(8).required(),
     city: Joi.string().required(),
     userRole: Joi.string().required(),
     state: Joi.string().required(),
     country: Joi.string().required(),
+    website: Joi.string().required(),
     phone_number: Joi.string().optional().allow(""),
     mobile_number: Joi.string().optional().allow(""),
   });
@@ -1744,10 +1743,10 @@ exports.createUser = async (req, res) => {
     };
 
     let isExists =
-      userData.role == "user"
-        ? User.findOne(dynamicFilter)
-        : userData.role == "seller"
-        ? Seller.findOne(dynamicFilter)
+      userData.userRole == "Customer"
+        ? await User.findOne(dynamicFilter)
+        : userData.userRole == "seller"
+        ? await Seller.findOne(dynamicFilter)
         : null;
     if (isExists) {
       return res.status(400).json({
@@ -1755,10 +1754,10 @@ exports.createUser = async (req, res) => {
       });
     }
     let users =
-      userData.role == "user"
-        ? User.create(userData)
-        : userData.role == "seller"
-        ? Seller.create(userData)
+      userData.userRole == "Customer"
+        ? await User.create(userData)
+        : userData.userRole == "seller"
+        ? await Seller.create(userData)
         : null;
     return res.status(200).json({
       data: users,

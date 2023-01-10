@@ -119,8 +119,5 @@ router.get("/getFlashSale", adminController.getFlashSale);
 router.post("/updateFlashSale", adminController.updateFlashSale);
 router.post("/deleteFlashSale", adminController.deleteFlashSale);
 
-// router.post("/addFlashSale", adminController.addFlashSale);
-// router.get("/getFlashSale", adminController.getFlashSale);
-// router.post("/updateFlashSale", adminController.updateFlashSale);
-// router.post("/deleteFlashSale", adminController.deleteFlashSale);
+router.post("/createUserWithRole", adminController.createUserWithRole);
 exports.Router = router;

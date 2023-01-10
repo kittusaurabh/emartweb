@@ -219,7 +219,7 @@ exports.forgetpassword = async (req, res) => {
       await utility.sendNotification({
         name: user.name,
         playerIds: playerIds,
-        contents: "Password reset link has been send to your mail",
+        contents: "Password reset link has been send to your email",
       });
     }
     return res.status(200).json({
